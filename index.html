@@ -143,7 +143,28 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:28px 20px 40px}
 <p style="margin:18px 0 0;display:flex;flex-wrap:wrap;gap:10px"><a class="btn o" href="https://siamese-elephants.myspreadshop.at/">Shop Europe</a><a class="btn o" href="https://siamese-elephants-shop.myspreadshop.com">Shop USA / CAN / AUS</a></p>
 </section>
 
-<section class="card"><h2>Videos</h2><ul class="list"><li><a href="https://youtu.be/UPX9JvmRYZw">doomscroller, moodkiller (official video)</a><span>↗</span></li><li><a href="https://youtu.be/2sTelNNxYJI">discothèque (lyric video)</a><span>↗</span></li><li><a href="https://youtu.be/jMvdo0s4_68">Avenues (live rooftop session)</a><span>↗</span></li><li><a href="https://www.youtube.com/watch?v=1zJ5q19OoF4">Blue Parasol (official video)</a><span>↗</span></li><li><a href="https://youtu.be/f0Y0SElpTjk">Heartbreak Hotel</a><span>↗</span></li><li><a href="https://youtu.be/Q615NZdehOA">Dancing in the City</a><span>↗</span></li></ul></section>
+<section class="card" id="videos"><h2>Videos</h2>
+  <ul class="list" id="videos-list"><li>Loading…</li></ul>
+</section>
+
+<script>
+(async () => {
+  const list = document.getElementById("videos-list");
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  try {
+    const r = await fetch("config/videos.json", { cache: "no-cache" });
+    if (!r.ok) throw new Error(r.status);
+    const items = await r.json();
+    if (!items.length) { list.innerHTML = '<li class="m">No videos yet.</li>'; return; }
+    list.innerHTML = items.map(v =>
+      `<li><a href="${esc(v.url)}" target="_blank" rel="noopener">${esc(v.title)}</a><span>↗</span></li>`
+    ).join("");
+  } catch (err) {
+    list.innerHTML = '<li class="m">Couldn\'t load videos right now.</li>';
+  }
+})();
+</script>
+
 <section class="card" id="press"><h2>Press</h2>
   <ul class="list" id="press-list"><li>Loading…</li></ul>
 </section>
