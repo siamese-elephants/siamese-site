@@ -1,0 +1,19 @@
+[
+  {
+    "date": "2026-11-14",
+    "city": "Vienna",
+    "country": "Austria",
+    "venue": "Venue name",
+    "note": "w/ support from X",
+    "tickets": "https://example.com/tickets",
+    "soldOut": false
+  },
+  {
+    "date": "2026-12-03",
+    "city": "Graz",
+    "country": "Austria",
+    "venue": "Another venue",
+    "tickets": "https://example.com/tickets",
+    "soldOut": true
+  }
+]
