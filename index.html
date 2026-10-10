@@ -144,7 +144,28 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:28px 20px 40px}
 </section>
 
 <section class="card"><h2>Videos</h2><ul class="list"><li><a href="https://youtu.be/UPX9JvmRYZw">doomscroller, moodkiller (official video)</a><span>↗</span></li><li><a href="https://youtu.be/2sTelNNxYJI">discothèque (lyric video)</a><span>↗</span></li><li><a href="https://youtu.be/jMvdo0s4_68">Avenues (live rooftop session)</a><span>↗</span></li><li><a href="https://www.youtube.com/watch?v=1zJ5q19OoF4">Blue Parasol (official video)</a><span>↗</span></li><li><a href="https://youtu.be/f0Y0SElpTjk">Heartbreak Hotel</a><span>↗</span></li><li><a href="https://youtu.be/Q615NZdehOA">Dancing in the City</a><span>↗</span></li></ul></section>
-<section class="card"><h2>Press</h2><ul class="list"><li><a href="https://www.derstandard.at/story/3000000314864/saenger-alex-kriz-von-siamese-elephants-sehnt-sich-nach-fetir">derStandard interview (2026, DE)</a><span>↗</span></li><li><a href="https://www.musicaustria.at/vor-allem-soundmaessig-war-uns-klar-dass-wir-etwas-eigenstaendiges-machen-wollen-siamaese-elephants-im-mica-interview">mica on White Flag (2026, DE)</a><span>↗</span></li><li><a href="https://www.musicexport.at/cherish-the-little-moments-siamese-elephants/">mica interview (2023)</a><span>↗</span></li><li><a href="https://fm4.orf.at/stories/3014445/">FM4 Best New Music (2021, DE)</a><span>↗</span></li></ul></section>
+<section class="card" id="press"><h2>Press</h2>
+  <ul class="list" id="press-list"><li>Loading…</li></ul>
+</section>
+
+<script>
+(async () => {
+  const list = document.getElementById("press-list");
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  try {
+    const r = await fetch("config/press.json", { cache: "no-cache" });
+    if (!r.ok) throw new Error(r.status);
+    const items = (await r.json()).sort((a, b) => (b.year || 0) - (a.year || 0));
+    if (!items.length) { list.innerHTML = '<li class="m">No press yet.</li>'; return; }
+    list.innerHTML = items.map(p => {
+      const meta = [p.year, p.lang].filter(Boolean).join(", ");
+      return `<li><a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.title)}${meta ? ` (${esc(meta)})` : ""}</a><span>↗</span></li>`;
+    }).join("");
+  } catch (err) {
+    list.innerHTML = '<li class="m">Couldn\'t load press right now.</li>';
+  }
+})();
+</script>
 <section class="card" id="contact"><h2>Booking</h2><p style="margin:0">Niklas Mayr (Assim Live)</p><p class="m" style="margin:4px 0 0">Add booking email here.</p></section>
 </main>
 <footer>© Siamese Elephants · Vienna</footer></div>
