@@ -10,5 +10,16 @@
     "date": "2026-09-15",
     "title": "Another announcement",
     "text": "Older news goes below."
+  },
+  {
+    "date": "2026-09-15",
+    "title": "Anotherrrr announcement",
+    "text": "Older news goes below."
+  },
+  {
+    "date": "2026-09-15",
+    "title": "Another announcement",
+    "text": "Lorem ipsum bipsum fati lari tralalala balabala",
+    "linkText": "Listen now →"
   }
 ]
