@@ -89,7 +89,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:28px 20px 40px}
   const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const empty = '<p class="m">No upcoming shows right now. Follow along for new dates.</p>';
   try {
-    const r = await fetch("shows.json", { cache: "no-cache" });
+    const r = await fetch("config/shows.json", { cache: "no-cache" });
     if (!r.ok) throw new Error(r.status);
     const all = await r.json();
 
