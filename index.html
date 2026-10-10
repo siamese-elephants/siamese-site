@@ -55,6 +55,7 @@ main{padding:24px 16px 8px;display:grid;gap:14px}
 .show .d{background:var(--card2);border-radius:12px;text-align:center;padding:7px 0;line-height:1.1}
 .show .d b{display:block;font-size:22px}.show .d span{font-size:11px;letter-spacing:.1em;color:var(--mut)}
 .show .w b{display:block}.show .w span{color:var(--mut);font-size:14px}
+.show .w em{display:block;font-style:normal;font-size:13px;color:var(--beige);opacity:.75;margin-top:2px}
 .show.sold .btn{background:transparent;color:var(--mut);border:1.5px solid var(--card2);pointer-events:none}
 /* image grids */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:14px}
@@ -78,15 +79,47 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:28px 20px 40px}
 <article class="ann"><time>00 Month 2026</time><h3>Another announcement</h3><p>Older news goes below.</p></article>
 </section>
 
-<!-- ===== EDIT: SHOWS =====
-     COPY ME: one <div class="show"> per concert. Add class "sold" (class="show sold") to grey out the ticket button.
-     If there are no shows, delete the .show rows and un-comment the "no shows" line. -->
+<!-- ===== SHOWS ===== -->
 <section class="card" id="shows"><h2>Shows</h2>
-<!-- <p class="m">No upcoming shows right now. Follow along for new dates.</p> -->
-<div class="show"><div class="d"><b>00</b><span>MON</span></div><div class="w"><b>City, Country</b><span>Venue name</span></div><a class="btn s" href="#">Tickets</a></div>
-<div class="show"><div class="d"><b>00</b><span>MON</span></div><div class="w"><b>City, Country</b><span>Venue name</span></div><a class="btn s" href="#">Tickets</a></div>
-<div class="show sold"><div class="d"><b>00</b><span>MON</span></div><div class="w"><b>City, Country</b><span>Venue name</span></div><a class="btn s" href="#">Sold out</a></div>
+  <div id="shows-list"><p class="m">Loading shows…</p></div>
 </section>
+<script>
+(async () => {
+  const box = document.getElementById("shows-list");
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const empty = '<p class="m">No upcoming shows right now. Follow along for new dates.</p>';
+  try {
+    const r = await fetch("shows.json", { cache: "no-cache" });
+    if (!r.ok) throw new Error(r.status);
+    const all = await r.json();
+
+    // Parse "YYYY-MM-DD" as a local date so it never shifts by a day
+    const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+
+    const shows = all
+      .map(s => ({ ...s, _d: toDate(s.date) }))
+      .filter(s => s._d >= today)
+      .sort((a, b) => a._d - b._d);
+
+    if (!shows.length) { box.innerHTML = empty; return; }
+
+    box.innerHTML = shows.map(s => {
+      const mon = s._d.toLocaleString("en", { month: "short" }).toUpperCase();
+      const btn = s.tickets
+        ? `<a class="btn s" href="${esc(s.tickets)}" target="_blank" rel="noopener">${s.soldOut ? "Sold out" : "Tickets"}</a>`
+        : "";
+      return `<div class="show${s.soldOut ? " sold" : ""}">
+        <div class="d"><b>${s._d.getDate()}</b><span>${mon}</span></div>
+        <div class="w"><b>${esc(s.city)}, ${esc(s.country)}</b><span>${esc(s.venue)}</span></div>
+        ${btn}
+      </div>`;
+    }).join("");
+  } catch (err) {
+    box.innerHTML = '<p class="m">Couldn\'t load shows right now.</p>';
+  }
+})();
+</script>
 
 <section class="card feature"><h2>New EP · 2026</h2><div class="t">White Flag</div><p>Five tracks, out now.</p><a class="btn" href="https://siamese-elephants.bandcamp.com/album/white-flag">Listen on Bandcamp</a></section>
 
