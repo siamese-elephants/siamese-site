@@ -189,8 +189,8 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:28px 20px 40px}
 <p style="margin:18px 0 0;display:flex;flex-wrap:wrap;gap:10px"><a class="btn o" href="https://siamese-elephants.myspreadshop.at/">Shop Europe</a><a class="btn o" href="https://siamese-elephants-shop.myspreadshop.com">Shop USA / CAN / AUS</a></p>
 </section>
 
-<section class="card" id="videos"><h2>Videos</h2>
-  <ul class="list" id="videos-list"><li>Loading…</li></ul>
+<section class="card" id="videos" hidden><h2>Videos</h2>
+  <ul class="list" id="videos-list"></ul>
 </section>
 
 <script>
@@ -198,14 +198,15 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:28px 20px 40px}
   const list = document.getElementById("videos-list");
   const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   try {
-    const r = await fetch("config/videos.json", { cache: "no-cache" });
-    if (!r.ok) throw new Error(r.status);
-    const items = await r.json();
-    if (!items.length) { list.innerHTML = '<li class="m">No videos yet.</li>'; return; }
-    list.innerHTML = items.map(v =>
-      `<li><a href="${esc(v.url)}" target="_blank" rel="noopener">${esc(v.title)}</a><span>↗</span></li>`
-    ).join("");
-  } catch (err) {
+  const r = await fetch("config/videos.json", { cache: "no-cache" });
+  if (!r.ok) throw new Error(r.status);
+  const items = await r.json();
+  if (!items.length) return; // section stays hidden
+  list.innerHTML = items.map(v =>
+    `<li><a href="${esc(v.url)}" target="_blank" rel="noopener">${esc(v.title)}</a><span>↗</span></li>`
+  ).join("");
+  document.getElementById("videos").hidden = false;
+  } catch (err) { /* leave hidden if the file is missing or broken */ }
     list.innerHTML = '<li class="m">Couldn\'t load videos right now.</li>';
   }
 })();
