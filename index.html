@@ -86,6 +86,15 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:28px 20px 40px}
 .video{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:var(--card2)}
 .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .vtitle{margin:12px 0 0;color:var(--mut);font-size:14px}
+/* floating section nav */
+.jump{position:fixed;left:0;right:0;margin-inline:auto;width:max-content;max-width:calc(100% - 24px);bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;display:flex;gap:4px;padding:5px;border-radius:99px;background:rgba(27,37,30,.88);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid var(--card2);box-shadow:0 6px 24px rgba(0,0,0,.45);overflow-x:auto;scrollbar-width:none;opacity:0;pointer-events:none;transform:translateY(16px);transition:opacity .25s,transform .25s}
+.jump::-webkit-scrollbar{display:none}
+.jump.on{opacity:1;pointer-events:auto;transform:none}
+.jump a{flex:none;padding:10px 14px;border-radius:99px;font-size:13px;font-weight:500;color:var(--mut);transition:background .2s,color .2s}
+.jump a.act{background:var(--beige);color:#141a15}
+.jump a[hidden]{display:none}
+footer{padding-bottom:96px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.jump{transition:none}}
 </style></head><body><div class="wrap">
 
 <div class="hero"><img src="img/SE_hero.jpg" alt="Siamese Elephants, four band members standing on an escalator platform"><span class="credit">Photo: Paul Vincenth Schuetz</span></div>
@@ -330,4 +339,53 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:28px 20px 40px}
 </main>
 <footer>© Siamese Elephants · Vienna</footer></div>
 
+<script>
+(() => {
+  const items = [["news","News"],["shows","Shows"],["music","Music"],["merch","Merch"],["videos","Videos"],["press","Press"],["contact","Booking"]];
+  const nav = document.createElement("nav");
+  nav.className = "jump";
+  nav.setAttribute("aria-label", "Jump to section");
+  nav.innerHTML = '<a href="#" data-top aria-label="Back to top">↑ Top</a>' +
+    items.map(([id, l]) => `<a href="#${id}" data-id="${id}">${l}</a>`).join("");
+  document.body.appendChild(nav);
+
+  const hero = document.querySelector(".hero");
+  const chips = [...nav.querySelectorAll("[data-id]")];
+  const secs = items.map(([id]) => document.getElementById(id));
+  let last = null, ticking = false;
+
+  // hide chips for sections that are hidden (e.g. empty JSON)
+  const sync = () => chips.forEach(a => { a.hidden = document.getElementById(a.dataset.id).hidden; });
+  new MutationObserver(sync).observe(document.querySelector("main"), { attributes: true, attributeFilter: ["hidden"], subtree: true });
+  sync();
+
+  nav.querySelector("[data-top]").addEventListener("click", e => {
+    e.preventDefault();
+    scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  const update = () => {
+    ticking = false;
+    nav.classList.toggle("on", hero.getBoundingClientRect().bottom < 0);
+
+    let cur = null;
+    secs.forEach(s => { if (!s.hidden && s.getBoundingClientRect().top <= innerHeight * 0.4) cur = s.id; });
+    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) {
+      const vis = secs.filter(s => !s.hidden);
+      if (vis.length) cur = vis[vis.length - 1].id;   // at the very bottom: last section
+    }
+    if (cur === last) return;
+    last = cur;
+    chips.forEach(a => {
+      const on = a.dataset.id === cur;
+      a.classList.toggle("act", on);
+      if (on) nav.scrollTo({ left: a.offsetLeft - nav.clientWidth / 2 + a.offsetWidth / 2, behavior: "smooth" });
+    });
+  };
+  const req = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+  addEventListener("scroll", req, { passive: true });
+  addEventListener("resize", req);
+  update();
+})();
+</script>
 </body></html>
