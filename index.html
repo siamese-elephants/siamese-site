@@ -192,25 +192,23 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:28px 20px 40px}
 <section class="card" id="videos" hidden><h2>Videos</h2>
   <ul class="list" id="videos-list"></ul>
 </section>
-
 <script>
 (async () => {
   const list = document.getElementById("videos-list");
   const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   try {
-  const r = await fetch("config/videos.json", { cache: "no-cache" });
-  if (!r.ok) throw new Error(r.status);
-  const items = await r.json();
-  if (!items.length) return; // section stays hidden
-  list.innerHTML = items.map(v =>
-    `<li><a href="${esc(v.url)}" target="_blank" rel="noopener">${esc(v.title)}</a><span>↗</span></li>`
-  ).join("");
-  document.getElementById("videos").hidden = false;
+    const r = await fetch("config/videos.json", { cache: "no-cache" });
+    if (!r.ok) throw new Error(r.status);
+    const items = await r.json();
+    if (!items.length) return; // section stays hidden
+    list.innerHTML = items.map(v =>
+      `<li><a href="${esc(v.url)}" target="_blank" rel="noopener">${esc(v.title)}</a><span>↗</span></li>`
+    ).join("");
+    document.getElementById("videos").hidden = false;
   } catch (err) { /* leave hidden if the file is missing or broken */ }
-    list.innerHTML = '<li class="m">Couldn\'t load videos right now.</li>';
-  }
 })();
 </script>
+
 <section class="card quotes" id="quotes" hidden aria-label="Press quotes">
   <div class="qview"><div class="qtrack"></div></div>
   <div class="qdots"></div>
