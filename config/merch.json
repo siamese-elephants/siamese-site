@@ -2,13 +2,13 @@
   "items": [
     {
       "name": "Siamese Elephants Tshirt (Black)",
-      "price": "€25",
+      "price": "23€",
       "url": "https://siamese-elephants.myspreadshop.at/siamese+elephants-A69ce78b53105e74fbe9ad608?productType=6&sellable=v974RXXqa7uxGe5ax1Bq-6-7&appearance=2",
       "image": "https://image.spreadshirtmedia.net/image-server/v1/products/T6A2PA8124PT17X74Y54D357715634W23184H8975/views/1,width=650,height=650,appearanceId=2,backgroundColor=001b251e.jpg"
     },
     {
       "name": "Another product",
-      "price": "€00",
+      "price": "",
       "url": "https://siamese-elephants.myspreadshop.at/"
     }
   ],
