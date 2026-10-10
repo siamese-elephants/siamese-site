@@ -90,12 +90,36 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:28px 20px 40px}
       
 <main>
 
-<!-- ===== EDIT: ANNOUNCEMENTS =====
-     Newest first. COPY ME: one <article> per announcement. Delete the <p> links if you don't need them. -->
-<section class="card" id="news"><h2>Announcements</h2>
-<article class="ann"><time>00 Month 2026</time><h3>UNDER CONSTRUCTION</h3><p>We are building a new page here...<a href="#">Optional link →</a></p></article>
-<article class="ann"><time>00 Month 2026</time><h3>Another announcement</h3><p>Older news goes below.</p></article>
+<section class="card" id="news" hidden><h2>Announcements</h2>
+  <div id="news-list"></div>
 </section>
+
+<script>
+(async () => {
+  const box = document.getElementById("news-list");
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+  try {
+    const r = await fetch("config/announcements.json", { cache: "no-cache" });
+    if (!r.ok) throw new Error(r.status);
+    const items = (await r.json())
+      .map(a => ({ ...a, _d: a.date ? toDate(a.date) : null }))
+      .sort((a, b) => (b._d || 0) - (a._d || 0));
+    if (!items.length) return; // section stays hidden
+
+    box.innerHTML = items.map(a => {
+      const when = a._d
+        ? `<time datetime="${esc(a.date)}">${a._d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</time>`
+        : "";
+      const link = a.link
+        ? ` <a href="${esc(a.link)}" target="_blank" rel="noopener">${esc(a.linkText || "Read more →")}</a>`
+        : "";
+      return `<article class="ann">${when}<h3>${esc(a.title)}</h3><p>${esc(a.text)}${link}</p></article>`;
+    }).join("");
+    document.getElementById("news").hidden = false;
+  } catch (err) { /* leave hidden if the file is missing or broken */ }
+})();
+</script>
 
 <!-- ===== SHOWS ===== -->
 <section class="card" id="shows"><h2>Shows</h2>
