@@ -85,11 +85,18 @@ main{padding:24px 16px 8px;display:grid;gap:14px}
 .tile small{color:var(--mut)}
 .tile .ph{aspect-ratio:1;border-radius:12px;background:var(--card2);display:grid;place-items:center;color:var(--mut);font-size:12px;letter-spacing:.14em;text-transform:uppercase;transition:.15s}
 .tile:hover .ph{transform:translateY(-3px);opacity:.92}
-#merch-list .tile{text-align:center}
-#merch-list{overflow:hidden;padding-top:4px;margin-top:-4px;transition:max-height .4s ease}
-#merch-toggle{display:block;margin:16px auto 0;font:inherit;font-weight:700;font-size:14px;color:var(--beige);cursor:pointer}
-#merch-toggle[hidden]{display:none}
-@media (prefers-reduced-motion:reduce){#merch-list{transition:none}}
+/* foldable merch */
+.fold{position:relative}
+.fold #merch-list{overflow:hidden;padding-top:4px;margin-top:-4px;transition:max-height .45s ease}
+.fold::after{content:"";position:absolute;left:0;right:0;bottom:0;height:72px;background:linear-gradient(to bottom,rgba(27,37,30,0),var(--card) 85%);pointer-events:none;transition:opacity .3s}
+.fold.open::after{opacity:0}
+.more{display:flex;align-items:center;gap:14px;width:100%;margin:6px 0 0;padding:10px 0;background:none;border:0;font:inherit;font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);cursor:pointer;transition:color .2s}
+.more:hover,.more:focus-visible{color:var(--beige)}
+.more::before,.more::after{content:"";flex:1;height:1px;background:var(--card2)}
+.more svg{width:12px;height:12px;margin-left:6px;vertical-align:-1px;transition:transform .3s}
+.more[aria-expanded="true"] svg{transform:rotate(180deg)}
+.more[hidden]{display:none}
+@media (prefers-reduced-motion:reduce){.fold #merch-list,.fold::after,.more svg{transition:none}}
 footer{text-align:center;color:var(--mut);font-size:13px;padding:28px 20px 40px}
 /* youtube feature */
 .video{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:var(--card2)}
@@ -307,16 +314,21 @@ footer{padding-bottom:96px}
 </script>
 
 <section class="card" id="merch" hidden><h2>Merch</h2>
-  <div class="grid" id="merch-list"></div>
-  <button class="btn o" id="merch-toggle" type="button" aria-expanded="false" aria-controls="merch-list" hidden>View more</button>
+  <div class="fold" id="merch-fold"><div class="grid" id="merch-list"></div></div>
+  <button class="more" id="merch-toggle" type="button" aria-expanded="false" aria-controls="merch-list" hidden>
+    <span>Show more</span>
+    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4.5 6 8.5l4-4"/></svg>
+  </button>
   <p id="merch-shops" style="margin:18px 0 0;display:flex;flex-wrap:wrap;gap:10px"></p>
 </section>
 
 <script>
 (async () => {
   const grid = document.getElementById("merch-list");
+  const fold = document.getElementById("merch-fold");
   const shopsBox = document.getElementById("merch-shops");
   const toggle = document.getElementById("merch-toggle");
+  const label = toggle.querySelector("span");
   const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   try {
     const r = await fetch("config/merch.json", { cache: "no-cache" });
@@ -332,7 +344,7 @@ footer{padding-bottom:96px}
         : `<div class="ph">Product</div>`;
       return `<a class="tile" href="${esc(p.url)}" target="_blank" rel="noopener">${pic}<b>${esc(p.name)}</b>${p.price ? `<small>${esc(p.price)}</small>` : ""}</a>`;
     }).join("");
-    grid.hidden = !items.length;
+    fold.hidden = !items.length;
 
     shopsBox.innerHTML = shops.map(s =>
       `<a class="btn o" href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label)}</a>`
@@ -341,26 +353,37 @@ footer{padding-bottom:96px}
 
     document.getElementById("merch").hidden = false;
 
-    // foldable: show only the first row until "View more" is tapped
+    // foldable: first row + a faded peek of the next row
     let open = false;
+    const PEEK = 56; // px of the second row that stays visible
     const measure = () => {
       const tiles = [...grid.children];
       if (!tiles.length) return;
       const rects = tiles.map(t => t.getBoundingClientRect());
       const gridTop = grid.getBoundingClientRect().top;
-      const firstTop = rects[0].top;
-      const rowEnd = Math.max(...rects.filter(x => Math.abs(x.top - firstTop) < 2).map(x => x.bottom)) - gridTop;
-      const needsFold = grid.scrollHeight > rowEnd + 2;
+      const firstRow = rects.filter(x => Math.abs(x.top - rects[0].top) < 2);
+      const rowEnd = Math.max(...firstRow.map(x => x.bottom)) - gridTop;
+      const gap = parseFloat(getComputedStyle(grid).rowGap) || 14;
+      const full = grid.scrollHeight;
+      const peek = Math.min(rowEnd + gap + PEEK, full);
+      const needsFold = full > peek + 24;
+
       toggle.hidden = !needsFold;
-      grid.style.maxHeight = needsFold && !open ? rowEnd + "px" : grid.scrollHeight + "px";
+      fold.classList.toggle("open", open || !needsFold);
+      grid.style.maxHeight = (needsFold && !open ? peek : full) + "px";
+      label.textContent = open ? "Show less" : "Show " + (tiles.length - firstRow.length) + " more";
     };
-    toggle.addEventListener("click", () => {
-      open = !open;
-      toggle.textContent = open ? "View less" : "View more";
+    const setOpen = v => {
+      open = v;
       toggle.setAttribute("aria-expanded", open);
       measure();
+    };
+    toggle.addEventListener("click", () => {
+      setOpen(!open);
       if (!open) document.getElementById("merch").scrollIntoView({ block: "nearest", behavior: "smooth" });
     });
+    // keyboard users tabbing into a hidden item unfold the grid
+    grid.addEventListener("focusin", () => { if (!open && !toggle.hidden) setOpen(true); });
     addEventListener("resize", measure);
     if (document.fonts) document.fonts.ready.then(measure);
     measure();
