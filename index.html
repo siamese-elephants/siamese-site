@@ -371,7 +371,7 @@ footer{padding-bottom:96px}
       toggle.hidden = !needsFold;
       fold.classList.toggle("open", open || !needsFold);
       grid.style.maxHeight = (needsFold && !open ? peek : full) + "px";
-      label.textContent = open ? "Show less" : "Show " + (tiles.length - firstRow.length) + " more";
+      label.textContent = open ? "Show less" : "Show more";
     };
     const setOpen = v => {
       open = v;
