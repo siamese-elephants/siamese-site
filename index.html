@@ -86,6 +86,10 @@ main{padding:24px 16px 8px;display:grid;gap:14px}
 .tile .ph{aspect-ratio:1;border-radius:12px;background:var(--card2);display:grid;place-items:center;color:var(--mut);font-size:12px;letter-spacing:.14em;text-transform:uppercase;transition:.15s}
 .tile:hover .ph{transform:translateY(-3px);opacity:.92}
 #merch-list .tile{text-align:center}
+#merch-list{overflow:hidden;padding-top:4px;margin-top:-4px;transition:max-height .4s ease}
+#merch-toggle{display:block;margin:16px auto 0;font:inherit;font-weight:700;font-size:14px;color:var(--beige);cursor:pointer}
+#merch-toggle[hidden]{display:none}
+@media (prefers-reduced-motion:reduce){#merch-list{transition:none}}
 footer{text-align:center;color:var(--mut);font-size:13px;padding:28px 20px 40px}
 /* youtube feature */
 .video{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:var(--card2)}
@@ -304,6 +308,7 @@ footer{padding-bottom:96px}
 
 <section class="card" id="merch" hidden><h2>Merch</h2>
   <div class="grid" id="merch-list"></div>
+  <button class="btn o" id="merch-toggle" type="button" aria-expanded="false" aria-controls="merch-list" hidden>View more</button>
   <p id="merch-shops" style="margin:18px 0 0;display:flex;flex-wrap:wrap;gap:10px"></p>
 </section>
 
@@ -311,6 +316,7 @@ footer{padding-bottom:96px}
 (async () => {
   const grid = document.getElementById("merch-list");
   const shopsBox = document.getElementById("merch-shops");
+  const toggle = document.getElementById("merch-toggle");
   const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   try {
     const r = await fetch("config/merch.json", { cache: "no-cache" });
@@ -334,6 +340,30 @@ footer{padding-bottom:96px}
     shopsBox.hidden = !shops.length;
 
     document.getElementById("merch").hidden = false;
+
+    // foldable: show only the first row until "View more" is tapped
+    let open = false;
+    const measure = () => {
+      const tiles = [...grid.children];
+      if (!tiles.length) return;
+      const rects = tiles.map(t => t.getBoundingClientRect());
+      const gridTop = grid.getBoundingClientRect().top;
+      const firstTop = rects[0].top;
+      const rowEnd = Math.max(...rects.filter(x => Math.abs(x.top - firstTop) < 2).map(x => x.bottom)) - gridTop;
+      const needsFold = grid.scrollHeight > rowEnd + 2;
+      toggle.hidden = !needsFold;
+      grid.style.maxHeight = needsFold && !open ? rowEnd + "px" : grid.scrollHeight + "px";
+    };
+    toggle.addEventListener("click", () => {
+      open = !open;
+      toggle.textContent = open ? "View less" : "View more";
+      toggle.setAttribute("aria-expanded", open);
+      measure();
+      if (!open) document.getElementById("merch").scrollIntoView({ block: "nearest", behavior: "smooth" });
+    });
+    addEventListener("resize", measure);
+    if (document.fonts) document.fonts.ready.then(measure);
+    measure();
   } catch (err) { /* leave hidden if the file is missing or broken */ }
 })();
 </script>
