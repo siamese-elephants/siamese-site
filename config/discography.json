@@ -4,23 +4,27 @@
     "type": "EP",
     "year": 2026,
     "url": "https://siamese-elephants.bandcamp.com/album/white-flag",
-    "cover": "covers/white-flag.jpg"
+    "cover": "covers/whiteflag_v1.jpg"
   },
   {
     "title": "There Goes The Sun",
     "type": "LP",
+    "year": 2023,
     "url": "https://siamese-elephants.bandcamp.com/music",
-    "cover": "covers/there-goes-the-sun.jpg"
+    "cover": "covers/tgts_v1.jpg"
   },
   {
     "title": "What Happened at the Social Club?",
     "type": "LP",
-    "url": "https://siamese-elephants.bandcamp.com/music"
+    "year": 2021,
+    "url": "https://siamese-elephants.bandcamp.com/music",
+    "cover": "covers/socialclub_v1.png"
   },
   {
     "title": "About Astronauts",
     "type": "EP",
     "year": 2019,
     "url": "https://siamese-elephants.bandcamp.com/music"
+    "cover": "covers/aboutastronauts_v1.png"
   }
 ]
