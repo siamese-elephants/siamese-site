@@ -1,0 +1,12 @@
+{
+  "background": "#0b100d",
+  "card": "#1b251e",
+  "cardAlt": "#26332a",
+  "hero": "#505a4f",
+  "accent": "#e9dfc8",
+  "muted": "#e6e5e8",
+  "ink": "#141a15",
+  "inkSoft": "#4b5448",
+  "softText": "#cfc7b0",
+  "hover": "#ffffff"
+}
