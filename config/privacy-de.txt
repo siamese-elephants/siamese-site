@@ -7,18 +7,15 @@ Verantwortlicher
 Diese Website hat keine Benutzerkonten, kein Kontaktformular, keine Werbung und keine Analyse- oder Tracking-Tools. Wir setzen selbst keine Cookies.
 
 Hosting
-Die Website wird über GitHub Pages ausgeliefert (GitHub, Inc., USA). Beim Aufruf verarbeitet der Anbieter technische Daten wie deine IP-Adresse, Datum und Uhrzeit, die aufgerufene Datei und Browserinformationen. Rechtsgrundlage ist unser berechtigtes Interesse an einer sicheren Bereitstellung der Website (Art. 6 Abs. 1 lit. f DSGVO). Die Übermittlung in die USA stützt sich auf die Vereinbarungen des Anbieters (EU-US Data Privacy Framework bzw. Standardvertragsklauseln). {{Bitte prüfen, ob das aktuell zutrifft.}}
+Die Website wird über GitHub Pages ausgeliefert (GitHub, Inc., USA). Beim Aufruf verarbeitet der Anbieter technische Daten wie IP-Adresse, Datum und Uhrzeit, die aufgerufene Datei und Browserinformationen. Rechtsgrundlage ist unser berechtigtes Interesse an einer sicheren Bereitstellung der Website (Art. 6 Abs. 1 lit. f DSGVO).
 
 Eingebundene Dienste Dritter
-Beim Aufruf der Seite werden Inhalte von Google (Schriften, YouTube-Vorschaubilder und -Videos), Bandcamp (Musik-Player) und Spreadshirt (Merch-Bilder) geladen. Dabei übertragen dein Browser und dein Gerät technisch bedingt Daten, vor allem deine IP-Adresse, an diese Anbieter. Das hervorgehobene Video auf der Startseite nutzt den erweiterten Datenschutzmodus von YouTube. Auf der Seite „Videos“ wird der Player erst nach einem Klick geladen. Rechtsgrundlage ist unser berechtigtes Interesse an einer ansprechenden Darstellung der Seite (Art. 6 Abs. 1 lit. f DSGVO). Weitere Informationen in den Datenschutzerklärungen von [Google](https://policies.google.com/privacy), [Bandcamp](https://bandcamp.com/privacy) und Spreadshirt.
+Beim Aufruf der Seite werden Inhalte von Google (Schriften, YouTube-Vorschaubilder und -Videos), Bandcamp (Musik-Player) und Spreadshirt (Merch-Bilder) geladen. Dabei übertragen Ihr Browser und Gerät technisch bedingt Daten, v.a. IP-Adresse, an diese Anbieter. Das hervorgehobene Video auf der Startseite nutzt den erweiterten Datenschutzmodus von YouTube. Auf der Seite „Videos“ wird der Player erst nach einem Klick geladen. Weitere Informationen in den Datenschutzerklärungen von [Google](https://policies.google.com/privacy), [Bandcamp](https://bandcamp.com/privacy) und [Spreadshirt](https://www.spreadshirt.de/datenschutz).
 
 Externe Links
-Wir verlinken auf Bandcamp, Spotify, Apple Music, Instagram, TikTok, YouTube, unseren Merch-Shop und Ticketanbieter. Erst wenn du einen Link anklickst, gilt die Datenschutzerklärung des jeweiligen Anbieters.
+Wir verlinken auf Bandcamp, Spotify, Apple Music, Instagram, TikTok, YouTube, unseren Merch-Shop und Ticketanbieter. Erst wenn Sie einen Link anklicken, gilt die Datenschutzerklärung des jeweiligen Anbieters.
 
 Lokaler Speicher
 Die Seite speichert im Browser (localStorage) das Farbschema, damit sie beim nächsten Besuch sofort richtig aussieht. Der Eintrag bleibt auf deinem Gerät, enthält keine persönlichen Daten und kann in den Browsereinstellungen gelöscht werden.
 
-Kontakt per E-Mail
-Wenn du uns schreibst, verarbeiten wir deine Angaben, um deine Anfrage zu beantworten (Art. 6 Abs. 1 lit. b bzw. f DSGVO). Wir geben sie nicht weiter und löschen sie, wenn sie nicht mehr gebraucht werden.
-
-Stand: {{Monat Jahr}}
+Stand: {{Oktober 2026}}
