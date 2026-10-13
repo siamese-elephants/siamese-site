@@ -25,8 +25,8 @@ h1{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:clamp(
 p{margin:0 0 12px}
 b{color:var(--beige);font-weight:700}
 .todo{background:color-mix(in srgb,var(--beige) 16%,transparent);color:var(--beige);padding:0 4px;border-radius:4px}
-.lang{display:inline-flex;padding:2px;border:1px solid var(--card2);border-radius:99px}
-.lang button{padding:2px 9px;border:0;border-radius:99px;background:none;color:var(--mut);font:inherit;font-size:11px;font-weight:700;letter-spacing:.08em;cursor:pointer;transition:background .2s,color .2s}
+.langbtn{padding:2px 10px;border:1px solid var(--card2);border-radius:99px;background:none;color:var(--mut);font:inherit;font-size:11px;font-weight:700;letter-spacing:.08em;cursor:pointer;transition:color .2s,border-color .2s}
+.langbtn:hover,.langbtn:focus-visible{color:var(--beige);border-color:var(--beige);outline:0}
 footer{margin-top:28px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;color:var(--mut);font-size:12px}
 @media (prefers-reduced-motion:reduce){.back,.lang button{transition:none}}
 </style>
@@ -69,12 +69,9 @@ footer{margin-top:28px;display:flex;flex-wrap:wrap;align-items:center;justify-co
 </main>
 
 <footer>
-  <span>© Siamese Elephants · <span id="t-city">Wien</span> · <a href="imprint" id="t-imprint">Impressum</a></span>
-  <div class="lang" role="group" aria-label="Sprache / Language">
-    <button type="button" data-set="de" aria-pressed="false">DE</button>
-    <button type="button" data-set="en" aria-pressed="true">EN</button>
-  </div>
-</footer></div>
+  <span>© Siamese Elephants GbR · <span id="t-city">Vienna</span> · <a href="imprint" id="t-imprint">Imprint</a></span>
+  <button type="button" class="langbtn" id="lang-toggle" data-set="de" lang="de">Deutsch</button>
+</footer>
 
 <script>
 (() => {
@@ -112,7 +109,7 @@ footer{margin-top:28px;display:flex;flex-wrap:wrap;align-items:center;justify-co
   };
 
   const $ = id => document.getElementById(id);
-  const buttons = [...document.querySelectorAll(".lang button")];
+  const toggle = $("lang-toggle");
   const cache = {};
   const load = async lang => {
     if (cache[lang]) return cache[lang];
@@ -140,11 +137,16 @@ footer{margin-top:28px;display:flex;flex-wrap:wrap;align-items:center;justify-co
     put("t-city", ui.city);
     put("t-imprint", ui.imprint);
     $("body").innerHTML = page.html;
-    buttons.forEach(b => b.setAttribute("aria-pressed", b.dataset.set === lang));
+    if (toggle) {
+      const other = used === "en" ? "de" : "en";
+      toggle.textContent = other === "de" ? "Deutsch" : "English";
+      toggle.lang = other;
+      toggle.dataset.set = other;
+    }
     if (remember) history.replaceState(null, "", "#" + lang);   // shareable as privacy#en
   };
 
-  buttons.forEach(b => b.addEventListener("click", () => render(b.dataset.set, true)));
+  if (toggle) toggle.addEventListener("click", () => render(toggle.dataset.set, true));
   const fromHash = () => (location.hash === "#de" ? "de" : "en");
   addEventListener("hashchange", () => render(fromHash(), false));
   render(fromHash(), false);
