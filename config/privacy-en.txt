@@ -12,7 +12,5 @@ When the page is accessed, content is loaded from Google (fonts, YouTube thumbna
 External links
 We link to Bandcamp, Spotify, Apple Music, Instagram, TikTok, YouTube, our merch shop and ticket providers. The privacy policy of the respective provider applies only once you click on a link.
 
-Local storage
-The page stores your color scheme in the browser (localStorage) so that it looks right immediately on your next visit. The entry stays on your device, contains no personal data and can be deleted in your browser settings.
 
 Last updated: October 2026
