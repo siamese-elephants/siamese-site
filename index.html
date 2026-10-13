@@ -140,7 +140,8 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:28px 20px 96px}
   .jump{display:none}
 }
 /* floating bandcamp preview (desktop only) */
-.bc{display:none;position:fixed;z-index:40;top:50%;transform:translateY(-50%);left:calc(50% + 400px);width:min(300px,calc(50vw - 400px - 20px));padding:6px;border-radius:18px;background:color-mix(in srgb,var(--card) 80%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid var(--card2);box-shadow:0 12px 36px rgba(0,0,0,.4)}
+.bc{display:none;position:fixed;z-index:40;top:50%;transform:translateY(-50%);left:calc(50% + 400px);width:calc(var(--bcw,350px) + 12px);padding:6px;border-radius:18px;background:color-mix(in srgb,var(--card) 80%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid var(--card2);box-shadow:0 12px 36px rgba(0,0,0,.4)}
+.bc.on{display:block}
 .bc-h{display:flex;align-items:center;justify-content:space-between;width:100%;padding:8px 10px;background:none;border:0;font:inherit;font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);cursor:pointer;transition:color .2s}
 .bc-h:hover,.bc-h:focus-visible{color:var(--beige)}
 .bc-h svg{width:12px;height:12px;transition:transform .3s}
@@ -563,6 +564,7 @@ const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Dat
   });
 })();
 </script>
+
 <script>
 (async () => {
   let cfg;
@@ -573,8 +575,12 @@ const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Dat
   } catch (e) { return; }
   if (!/^\d{5,12}$/.test(String(cfg.albumId || ""))) return;
 
+  const W = Number(cfg.width) || 350;
+  const H = Number(cfg.height) || W + 120;
+
   const box = document.createElement("aside");
   box.className = "bc";
+  box.style.setProperty("--bcw", W + "px");
   box.setAttribute("aria-label", "Album preview");
   box.innerHTML = `<button class="bc-h" type="button" aria-expanded="true"><span>${esc(cfg.title || "Listen")}</span><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4.5 6 8.5l4-4"/></svg></button><div class="bc-b"></div>`;
   document.body.appendChild(box);
@@ -583,26 +589,32 @@ const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Dat
   const body = box.querySelector(".bc-b");
   const css = getComputedStyle(document.documentElement);
   const hex = (v, d) => /^#[0-9a-f]{6}$/i.test(v.trim()) ? v.trim().slice(1) : d;
-  const mq = matchMedia("(min-width:1200px)");
 
   const build = () => {
-    if (body.firstChild || !mq.matches) return;   // only load on wide screens, and only once
+    if (body.firstChild) return;
     const bg = hex(css.getPropertyValue("--card"), "1b251e");
     const link = hex(css.getPropertyValue("--beige"), "e9dfc8");
     const ifr = document.createElement("iframe");
-    ifr.src = `https://bandcamp.com/EmbeddedPlayer/album=${cfg.albumId}/size=large/bgcol=${bg}/linkcol=${link}/tracklist=${cfg.tracklist ? "true" : "false"}/artwork=small/transparent=true/`;
+    ifr.src = `https://bandcamp.com/EmbeddedPlayer/album=${cfg.albumId}/size=large/bgcol=${bg}/linkcol=${link}/tracklist=false/transparent=true/`;
     ifr.title = "Bandcamp player";
     ifr.loading = "lazy";
-    ifr.style.height = (Number(cfg.height) || 120) + "px";
+    ifr.style.cssText = `display:block;border:0;border-radius:12px;width:100%;height:${H}px`;
     body.appendChild(ifr);
+  };
+
+  // show only if there is room to the right of the column (and the window is tall enough)
+  const fit = () => {
+    const ok = innerWidth / 2 >= 400 + W + 12 + 20 && innerHeight >= H + 90;
+    box.classList.toggle("on", ok);
+    if (ok) build();
   };
 
   head.addEventListener("click", () => {
     const min = box.classList.toggle("min");
     head.setAttribute("aria-expanded", !min);
   });
-  mq.addEventListener("change", build);
-  build();
+  addEventListener("resize", fit);
+  fit();
 })();
 </script>
 </body></html>
