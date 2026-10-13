@@ -131,15 +131,12 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:28px 20px 96px}
   html{scroll-behavior:auto}
   .qtrack,.fold #merch-list,.fold::after,.more svg,.jump,.burger span,.menu{transition:none}
 }
-/* desktop layout */
-@media (min-width:1000px){
-  .wrap{max-width:1080px}
-  .hero img{max-height:560px}
-  main{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:18px}
-  #featured,#quotes,#music,#merch,#contact{grid-column:1/-1}
-  #news-list{max-height:320px}
-  .burger{right:calc((100vw - 1080px)/2 + 12px)}
-  .menu{right:calc((100vw - 1080px)/2 + 12px)}
+/* desktop: same single column, a bit more generous */
+@media (min-width:900px){
+  .wrap{max-width:720px}
+  .hero img{max-height:480px}
+  .logo img{width:min(100%,420px);max-height:170px}
+  .burger,.menu{right:calc((100vw - 720px)/2 + 12px)}
   .jump{display:none}
 }
 </style>
