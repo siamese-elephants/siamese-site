@@ -24,7 +24,6 @@ a{color:inherit;text-decoration:none}
 .hero{position:relative;background:var(--green)}
 .hero img{display:block;width:100%;height:auto;max-height:520px;object-fit:cover;object-position:top}
 .hero:after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,color-mix(in srgb,var(--bg) 15%,transparent) 0,transparent 25%,color-mix(in srgb,var(--bg) 55%,transparent) 70%,var(--bg) 100%)}
-.credit{position:absolute;left:10px;top:8px;z-index:2;font-size:8px;color:color-mix(in srgb,var(--beige) 50%,transparent)}
 .head{position:relative;z-index:1;margin-top:-150px;text-align:center;padding:0 20px 8px}
 .logo{margin:0;line-height:0}
 .logo img{display:block;margin:0 auto;width:min(100%,340px);max-width:100%;height:auto;max-height:140px;object-fit:contain}
@@ -607,7 +606,6 @@ const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Dat
 <script>
 (async () => {
   const img = document.getElementById("hero-img");
-  const credit = document.getElementById("hero-credit");
   let h;
   try {
     const r = await fetch("config/hero.json", { cache: "no-cache" });
@@ -617,7 +615,6 @@ const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Dat
 
   if (h.image) img.src = h.image;
   if (h.alt) img.alt = h.alt;
-  if (h.credit !== undefined) { credit.textContent = h.credit; credit.hidden = !h.credit; }
   if (h.type !== "video") return;
 
   const clips = (Array.isArray(h.video) ? h.video : [h.video])
