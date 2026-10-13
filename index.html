@@ -557,11 +557,17 @@ const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Dat
   menu.id = "site-menu";
   menu.setAttribute("aria-label", "Sections");
   document.body.append(btn, menu);
+  // menu entries that lead to another page instead of scrolling
+  const pages = { videos: "videos.html" };
 
   const build = () => {
     menu.innerHTML = items
       .filter(([id]) => { const s = document.getElementById(id); return s && !s.hidden; })
-      .map(([id, l]) => `<a href="#${id}">${l}</a>`).join("");
+      .map(([id, l]) => pages[id]
+        ? `<a href="${pages[id]}">${l} <span aria-hidden="true">→</span></a>`
+        : `<a href="#${id}">${l}</a>`
+      ).join("");
+  };
   };
   const setOpen = v => {
     if (v) build();
