@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Booking &amp; contact · Siamese Elephants</title>
+<link rel="canonical" href="https://siamese-elephants.com/booking.html">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0b100d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b100d;--card:#1b251e;--card2:#26332a;--green:#505a4f;--beige:#e9dfc8;--mut:#e6e5e8;--ink:#141a15;--ink2:#4b5448;--soft:#cfc7b0;--hover:#fff;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html,body{overflow-x:clip}
+body{margin:0;background:var(--bg);color:var(--beige);font:16px/1.55 "DM Sans",system-ui,sans-serif}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:980px;margin:0 auto;padding:18px 16px 48px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px}
+.back{display:inline-flex;align-items:center;gap:8px;padding:8px 14px 8px 12px;border:1px solid var(--card2);border-radius:99px;font-size:14px;font-weight:500;color:var(--mut);transition:color .2s,border-color .2s}
+.back:hover,.back:focus-visible{color:var(--beige);border-color:var(--beige);outline:0}
+.brand img{display:block;height:38px;width:auto}
+h1{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:clamp(36px,8vw,56px);line-height:1;margin:0 0 18px}
+.intro{max-width:560px;margin:0 0 30px;color:var(--soft);font-size:17px}
+.sec{margin:38px 0 14px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);font-weight:500}
+.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:18px}
+.bcard{background:var(--card);border-radius:18px;padding:22px;min-width:0}
+.bn{font-family:"DM Serif Display",Georgia,serif;font-size:26px;line-height:1.15;margin:0}
+.bco{margin:2px 0 0;color:var(--mut);font-size:14px}
+.bfor{margin:20px 0 8px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+.chips li{border:1px solid var(--card2);border-radius:99px;padding:3px 12px;font-size:14px;color:var(--soft)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:99px;border:1.5px solid var(--beige);background:var(--beige);color:var(--ink);font:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s}
+.btn.o{background:transparent;color:var(--beige)}
+.btn:hover,.btn:focus-visible{opacity:.85;outline:0}
+.msg{color:var(--mut)}
+footer{margin-top:44px;text-align:center;color:var(--mut);font-size:13px}
+@media (prefers-reduced-motion:reduce){.back,.btn{transition:none}}
+</style>
+
+<!-- color theme (config/theme.json), same as the homepage -->
+<script>
+(() => {
+  const MAP = {background:"--bg",card:"--card",cardAlt:"--card2",hero:"--green",accent:"--beige",muted:"--mut",ink:"--ink",inkSoft:"--ink2",softText:"--soft",hover:"--hover"};
+  const root = document.documentElement;
+  const apply = t => {
+    for (const [key, cssVar] of Object.entries(MAP)) {
+      const v = t[key];
+      if (v && CSS.supports("color", v)) root.style.setProperty(cssVar, v);
+      else root.style.removeProperty(cssVar);
+    }
+    if (t.background) document.querySelector('meta[name="theme-color"]')?.setAttribute("content", t.background);
+  };
+  try { const c = localStorage.getItem("se-theme"); if (c) apply(JSON.parse(c)); } catch (e) {}
+  fetch("config/theme.json", { cache: "no-cache" })
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(t => { apply(t); try { localStorage.setItem("se-theme", JSON.stringify(t)); } catch (e) {} })
+    .catch(() => {});
+})();
+</script>
+</head><body>
+<div class="wrap">
+
+<header class="top">
+  <a class="back" href="./"><span aria-hidden="true">←</span> Back to site</a>
+  <a class="brand" href="./" aria-label="Siamese Elephants, home"><img src="img/logo.png" alt="Siamese Elephants" width="800" height="300"></a>
+</header>
+
+<main>
+  <h1>Booking &amp; contact</h1>
+  <p class="intro" id="intro" hidden></p>
+  <div class="bgrid" id="bgrid"><p class="msg">Loading…</p></div>
+  <div id="dl" hidden>
+    <h2 class="sec">Downloads</h2>
+    <div class="actions" id="dl-list"></div>
+  </div>
+</main>
+
+<footer>© Siamese Elephants · Vienna</footer>
+</div>
+
+<script>
+(async () => {
+  const grid = document.getElementById("bgrid");
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const mail = /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/;
+  const okUrl = u => /^https?:\/\//i.test(u) || /^[\w][\w./%-]*$/.test(u);   // web link or a file in this site
+
+  let data;
+  try {
+    const r = await fetch("config/booking.json", { cache: "no-cache" });
+    if (!r.ok) throw new Error(r.status);
+    data = await r.json();
+  } catch (e) {
+    grid.innerHTML = '<p class="msg">Couldn\'t load the contact details right now.</p>';
+    return;
+  }
+
+  // accepts a plain list of contacts, or { intro, contacts, downloads }
+  const cfg = Array.isArray(data) ? { contacts: data } : (data || {});
+  const contacts = (cfg.contacts || []).filter(c => c && c.name);
+
+  if (cfg.intro) {
+    const p = document.getElementById("intro");
+    p.textContent = cfg.intro;
+    p.hidden = false;
+  }
+
+  if (!contacts.length) {
+    grid.innerHTML = '<p class="msg">No booking contact listed yet.</p>';
+  } else {
+    grid.innerHTML = contacts.map(c => {
+      const countries = (Array.isArray(c.countries) ? c.countries : [c.countries]).filter(Boolean);
+      const acts = [];
+      if (mail.test(c.email || "")) {
+        acts.push(`<a class="btn" href="mailto:${esc(c.email)}">Email</a>`);
+        acts.push(`<button class="btn o copy" type="button" data-copy="${esc(c.email)}">Copy address</button>`);
+      }
+      if (c.phone) acts.push(`<a class="btn o" href="tel:${esc(String(c.phone).replace(/[^\d+]/g, ""))}">${esc(c.phone)}</a>`);
+      if (/^https?:\/\//i.test(c.website || "")) acts.push(`<a class="btn o" href="${esc(c.website)}" target="_blank" rel="noopener">Website</a>`);
+      return `<article class="bcard">
+        <h2 class="bn">${esc(c.name)}</h2>
+        ${c.company ? `<p class="bco">${esc(c.company)}</p>` : ""}
+        ${countries.length ? `<p class="bfor">Books for</p><ul class="chips">${countries.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
+        ${acts.length ? `<div class="actions">${acts.join("")}</div>` : ""}
+      </article>`;
+    }).join("");
+
+    if (!navigator.clipboard) grid.querySelectorAll(".copy").forEach(b => b.remove());
+    grid.addEventListener("click", async e => {
+      const b = e.target.closest(".copy");
+      if (!b) return;
+      const old = b.textContent;
+      try { await navigator.clipboard.writeText(b.dataset.copy); b.textContent = "Copied"; }
+      catch (err) { b.textContent = "Couldn't copy"; }
+      setTimeout(() => { b.textContent = old; }, 1800);
+    });
+  }
+
+  const dls = (cfg.downloads || []).filter(d => d && d.label && okUrl(String(d.url || "")));
+  if (dls.length) {
+    document.getElementById("dl-list").innerHTML = dls.map(d =>
+      `<a class="btn o" href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.label)}</a>`
+    ).join("");
+    document.getElementById("dl").hidden = false;
+  }
+})();
+</script>
+</body></html>
