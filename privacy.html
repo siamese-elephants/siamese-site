@@ -71,8 +71,8 @@ footer{margin-top:28px;display:flex;flex-wrap:wrap;align-items:center;justify-co
 <footer>
   <span>© Siamese Elephants · <span id="t-city">Wien</span> · <a href="imprint" id="t-imprint">Impressum</a></span>
   <div class="lang" role="group" aria-label="Sprache / Language">
-    <button type="button" data-set="de" aria-pressed="true">DE</button>
-    <button type="button" data-set="en" aria-pressed="false">EN</button>
+    <button type="button" data-set="de" aria-pressed="false">DE</button>
+    <button type="button" data-set="en" aria-pressed="true">EN</button>
   </div>
 </footer></div>
 
@@ -127,7 +127,7 @@ footer{margin-top:28px;display:flex;flex-wrap:wrap;align-items:center;justify-co
     let used = lang, page;
     try { page = await load(lang); }
     catch (e) {
-      try { used = "de"; page = await load("de"); }
+      try { used = lang === "en" ? "de" : "en"; page = await load(used); }
       catch (e2) { $("body").innerHTML = "<p>Die Datenschutzerklärung konnte nicht geladen werden. / The privacy policy could not be loaded.</p>"; return; }
     }
     if (id !== current) return;                       // a newer click wins
@@ -145,7 +145,7 @@ footer{margin-top:28px;display:flex;flex-wrap:wrap;align-items:center;justify-co
   };
 
   buttons.forEach(b => b.addEventListener("click", () => render(b.dataset.set, true)));
-  const fromHash = () => (location.hash === "#en" ? "en" : "de");
+  const fromHash = () => (location.hash === "#de" ? "de" : "en");
   addEventListener("hashchange", () => render(fromHash(), false));
   render(fromHash(), false);
 })();
