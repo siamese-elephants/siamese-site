@@ -1,7 +1,12 @@
 {
-  "title": "Nightline",
+  "title": "Nightline · Kagraner Platz",
+  "api": "",
   "max": 10,
   "stops": [
-    { "id": 1234, "name": "Kagraner Platz" }
+    { "id": 885,  "name": "Kagraner Platz" },
+    { "id": 891,  "name": "Kagraner Platz" },
+    { "id": 923,  "name": "Kagraner Platz" },
+    { "id": 998,  "name": "Kagraner Platz" },
+    { "id": 1067, "name": "Kagraner Platz" }
   ]
 }
