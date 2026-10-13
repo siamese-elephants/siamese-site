@@ -24,6 +24,7 @@ a{color:inherit;text-decoration:none}
 .hero{position:relative;background:var(--green)}
 .hero img{display:block;width:100%;height:auto;max-height:520px;object-fit:cover;object-position:top}
 .hero:after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,color-mix(in srgb,var(--bg) 15%,transparent) 0,transparent 25%,color-mix(in srgb,var(--bg) 55%,transparent) 70%,var(--bg) 100%)}
+.hero{overflow:hidden}
 .head{position:relative;z-index:1;margin-top:-150px;text-align:center;padding:0 20px 8px}
 .logo{margin:0;line-height:0}
 .logo img{display:block;margin:0 auto;width:min(100%,340px);max-width:100%;height:auto;max-height:140px;object-fit:contain}
@@ -634,6 +635,7 @@ const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Dat
   v.setAttribute("aria-hidden", "true");
   v.disablePictureInPicture = true;
   v.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center";
+  if (Number(h.zoom) > 1) v.style.transform = `scale(${Number(h.zoom)})`;
 
   let i = 0;
   v.src = clips[0];
