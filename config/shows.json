@@ -6,14 +6,14 @@
     "venue": "Flucc Wanne",
     "note": "w/ Cassies",
     "tickets": "https://fienta.com/de/cassies-flucc",
-    "soldOut": false
+    "status": ""
   },
   {
     "date": "2027-02-12",
     "city": "Vienna",
     "country": "AT",
-    "venue": "Lucia",
-    "tickets": "https://www.clublucia.at",
-    "soldOut": false
+    "venue": "Club Lucia",
+    "tickets": "",
+    "status": "soon"
   }
 ]
