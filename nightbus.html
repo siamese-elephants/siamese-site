@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nightline · Siamese Elephants</title>
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0b100d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b100d;--card:#1b251e;--card2:#26332a;--green:#505a4f;--beige:#e9dfc8;--mut:#e6e5e8;--ink:#141a15;--ink2:#4b5448;--soft:#cfc7b0;--hover:#fff;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html,body{overflow-x:clip}
+body{margin:0;background:var(--bg);color:var(--soft);font:15px/1.55 "DM Sans",system-ui,sans-serif}
+a{color:inherit}
+.wrap{max-width:680px;margin:0 auto;padding:18px 16px 40px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:26px}
+.back{display:inline-flex;align-items:center;gap:8px;padding:7px 13px 7px 11px;border:1px solid var(--card2);border-radius:99px;font-size:13px;font-weight:500;color:var(--mut);text-decoration:none;transition:color .2s,border-color .2s}
+.back:hover,.back:focus-visible{color:var(--beige);border-color:var(--beige);outline:0}
+.brand img{display:block;height:32px;width:auto}
+h1{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:clamp(30px,7vw,42px);line-height:1.05;color:var(--beige);margin:0 0 6px}
+.sub{margin:0 0 20px;color:var(--mut)}
+
+/* the station monitor */
+.board{background:#050505;border:1px solid #2b2b2b;border-radius:14px;padding:14px 16px;color:#ffb000;text-shadow:0 0 7px rgba(255,176,0,.35);font-family:ui-monospace,"SF Mono",Menlo,Consolas,"Courier New",monospace}
+.bh{display:flex;justify-content:space-between;gap:12px;padding-bottom:10px;margin-bottom:4px;border-bottom:1px solid #3a2a00;font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+.row{display:grid;grid-template-columns:4.2em 1fr auto;gap:12px;align-items:baseline;padding:8px 0;font-size:17px}
+.l{font-weight:700}
+.d{overflow-wrap:anywhere}
+.d small{display:block;font-size:12px;opacity:.6;letter-spacing:.04em}
+.t{text-align:right;white-space:nowrap}
+.row.plan .t{opacity:.6}
+.msg{padding:10px 0;font-size:15px;opacity:.9}
+.bf{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;margin-top:8px;padding-top:8px;border-top:1px solid #3a2a00;font-size:11px;opacity:.65;letter-spacing:.04em}
+.note{margin:14px 2px 0;color:var(--mut);font-size:12px}
+@media (prefers-reduced-motion:reduce){.back{transition:none}}
+</style>
+
+<!-- color theme (config/theme.json), same as the other pages -->
+<script>
+(() => {
+  const MAP = {background:"--bg",card:"--card",cardAlt:"--card2",hero:"--green",accent:"--beige",muted:"--mut",ink:"--ink",inkSoft:"--ink2",softText:"--soft",hover:"--hover"};
+  const root = document.documentElement;
+  const apply = t => {
+    for (const [key, cssVar] of Object.entries(MAP)) {
+      const v = t[key];
+      if (v && CSS.supports("color", v)) root.style.setProperty(cssVar, v);
+      else root.style.removeProperty(cssVar);
+    }
+    if (t.background) document.querySelector('meta[name="theme-color"]')?.setAttribute("content", t.background);
+  };
+  try { const c = localStorage.getItem("se-theme"); if (c) apply(JSON.parse(c)); } catch (e) {}
+  fetch("config/theme.json", { cache: "no-cache" })
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(t => { apply(t); try { localStorage.setItem("se-theme", JSON.stringify(t)); } catch (e) {} })
+    .catch(() => {});
+})();
+</script>
+</head><body>
+<div class="wrap">
+
+<header class="top">
+  <a class="back" href="./"><span aria-hidden="true">←</span> Back to site</a>
+  <a class="brand" href="./" aria-label="Siamese Elephants, home"><img src="img/logo.png" alt="Siamese Elephants" width="800" height="300"></a>
+</header>
+
+<main>
+  <h1>Nightline</h1>
+  <p class="sub">Live night bus departures in Vienna. For getting home after the show.</p>
+
+  <section class="board" aria-live="polite">
+    <div class="bh"><span id="bh-title">Nightline</span><span id="bh-clock">--:--</span></div>
+    <div id="rows"><p class="msg">Loading departures …</p></div>
+    <div class="bf"><span>Data: Wiener Linien</span><span id="bf-status"></span></div>
+  </section>
+  <p class="note">Departures for the next 70 minutes, refreshed every 30 seconds. Times are real-time where available, dimmed times are scheduled only.</p>
+</main>
+</div>
+
+<script>
+(async () => {
+  const API = "https://www.wienerlinien.at/ogd_realtime/monitor";
+  const REFRESH = 30000;               // ms, Wiener Linien asks for at least 15 s between requests
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const clock = d => new Intl.DateTimeFormat("de-AT", { timeZone: "Europe/Vienna", hour: "2-digit", minute: "2-digit" }).format(d);
+
+  // live clock in Vienna time
+  const tickClock = () => { $("bh-clock").textContent = clock(new Date()); };
+  tickClock(); setInterval(tickClock, 5000);
+
+  let cfg = {};
+  try {
+    const r = await fetch("config/nightbus.json", { cache: "no-cache" });
+    if (r.ok) cfg = await r.json();
+  } catch (e) {}
+
+  const stops = (cfg.stops || []).filter(s => Number(s.id) > 0);
+  const MAX = Number(cfg.max) || 10;
+  const names = {};
+  stops.forEach(s => { if (s.name) names[String(s.id)] = s.name; });
+  $("bh-title").textContent = cfg.title || "Nightline";
+
+  if (!stops.length) {
+    $("rows").innerHTML = '<p class="msg">No stop set up yet. Add the stop IDs in config/nightbus.json.</p>';
+    return;
+  }
+
+  const setStatus = t => { $("bf-status").textContent = t; };
+  let hasRows = false;
+
+  const load = async () => {
+    try {
+      const url = API + "?" + stops.map(s => "stopId=" + encodeURIComponent(s.id)).join("&");
+      const r = await fetch(url, { cache: "no-store" });
+      const j = await r.json().catch(() => null);
+      if (!r.ok || !j || !j.data) {
+        const code = j && j.message && j.message.messageCode;
+        throw new Error(code === 316 ? "limit" : "bad response " + r.status);
+      }
+
+      const deps = [];
+      const stopTitles = new Set();
+      for (const m of j.data.monitors || []) {
+        const p = (m.locationStop || {}).properties || {};
+        const title = names[String((p.attributes || {}).rbl)] || p.title || "";
+        if (title) stopTitles.add(title);
+        for (const ln of m.lines || []) {
+          for (const d of (ln.departures || {}).departure || []) {
+            const v = d.vehicle || {};
+            const line = v.name || ln.name || "";
+            const type = v.type || ln.type || "";
+            if (!(type === "ptBusNight" || /^N\d/i.test(line))) continue;
+            const dt = d.departureTime || {};
+            const min = Number(dt.countdown);
+            if (!Number.isFinite(min)) continue;
+            deps.push({ line, to: v.towards || ln.towards || "", min, real: !!dt.timeReal, stop: title });
+          }
+        }
+      }
+      deps.sort((a, b) => a.min - b.min);
+      const shown = deps.slice(0, MAX);
+
+      if (stopTitles.size === 1 && !cfg.title) $("bh-title").textContent = "Nightline · " + [...stopTitles][0];
+      const multi = stopTitles.size > 1;
+
+      $("rows").innerHTML = shown.length
+        ? shown.map(d => `<div class="row${d.real ? "" : " plan"}" ${d.real ? "" : 'title="scheduled time"'}>
+            <span class="l">${esc(d.line)}</span>
+            <span class="d">${esc(d.to)}${multi && d.stop ? `<small>${esc(d.stop)}</small>` : ""}</span>
+            <span class="t">${d.min <= 0 ? "now" : d.min + " min"}</span>
+          </div>`).join("")
+        : '<p class="msg">No night buses in the next 70 minutes. Time to find another way home.</p>';
+      hasRows = true;
+      setStatus("updated " + clock(new Date()));
+    } catch (err) {
+      console.warn("Nightline:", err);
+      setStatus("connection problem");
+      if (!hasRows) {
+        $("rows").innerHTML = '<p class="msg">' + (String(err.message) === "limit"
+          ? "Too many requests right now, trying again in a moment."
+          : "Couldn't reach the departure data right now.") + "</p>";
+      }
+    }
+  };
+
+  // refresh while the tab is visible
+  let timer = null;
+  const start = () => { stop(); load(); timer = setInterval(load, REFRESH); };
+  const stop = () => { clearInterval(timer); timer = null; };
+  document.addEventListener("visibilitychange", () => { document.hidden ? stop() : start(); });
+  start();
+})();
+</script>
+</body></html>
