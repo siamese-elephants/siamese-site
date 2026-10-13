@@ -5,14 +5,14 @@
       "name": "Niklas Mayr",
       "company": "Assim Live",
       "countries": ["Austria", "Germany", "Switzerland"],
-      "email": "booking@example.com",
-      "phone": "+43 000 0000000",
-      "website": "https://example.com"
+      "email": "niklas@assim-live.com",
+      "phone": "",
+      "website": "https://www.assim-records.com/assim-live/about/"
     },
     {
-      "name": "Rest of world",
+      "name": "Send us an email :)",
       "countries": "Worldwide",
-      "email": "band@example.com"
+      "email": "siamese.elephants@outlook.com"
     }
   ],
   "downloads": [
