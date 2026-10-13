@@ -1,7 +1,7 @@
 {
   "type": "video",
-  "image": "img/SE_hero.jpg",
-  "alt": "Siamese Elephants, four band members standing on an escalator platform",
+  "image": "img/SE_hero",
+  "alt": "Siamese Elephants, four band members standing in a metro station",
   "video": ["video/SE_HOMEPAGE_V1.mp4"],
   "zoom": 2.5
 }
