@@ -135,10 +135,11 @@ footer{margin-top:28px;color:var(--mut);font-size:12px}
     const ui = UI[lang] || UI.de;
     document.documentElement.lang = used;
     document.title = (page.title || ui.title) + " · Siamese Elephants";
-    $("t-title").textContent = page.title || ui.title;
-    $("t-back").textContent = ui.back;
-    $("t-city").textContent = ui.city;
-    $("t-imprint").textContent = ui.imprint;
+    const put = (id, v) => { const el = $(id); if (el) el.textContent = v; };
+    put("t-title", page.title || ui.title);
+    put("t-back", ui.back);
+    put("t-city", ui.city);
+    put("t-imprint", ui.imprint);
     $("body").innerHTML = page.html;
     buttons.forEach(b => b.setAttribute("aria-pressed", b.dataset.set === lang));
     if (remember) history.replaceState(null, "", "#" + lang);   // shareable as privacy#en
