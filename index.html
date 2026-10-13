@@ -633,6 +633,7 @@ const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Dat
   v.preload = "auto";
   v.setAttribute("aria-hidden", "true");
   v.disablePictureInPicture = true;
+  v.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center";
 
   let i = 0;
   v.src = clips[0];
