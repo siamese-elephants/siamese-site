@@ -154,14 +154,6 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:28px 20px 96px}
 .vstrip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
 .vstrip img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:10px;background:var(--card2);transition:.15s}
 .vstrip a:hover img{transform:translateY(-3px);opacity:.92}
-/* hero: photo stays hidden until we know no video takes over */
-.hero.wait{background:var(--bg)}
-.hero img{transition:opacity .4s}
-.hero.wait img{opacity:0}
-/* hero has a fixed height, so neither the photo nor the video can change it */
-.hero{height:clamp(340px,78vw,480px)}
-.hero img{position:absolute;inset:0;width:100%;height:100%;max-height:none;object-fit:cover;object-position:top}
-.hero video{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-height:none!important;object-fit:cover}
 </style>
 
 <!-- shared helpers + color theme (config/theme.json) -->
@@ -189,7 +181,6 @@ const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Dat
 </head><body><div class="wrap">
 
 <div class="hero"><img id="hero-img" src="img/SE_hero.jpg" alt="Siamese Elephants, four band members standing on an escalator platform"></div>
-<div class="hero wait"><img id="hero-img" src="img/SE_hero.jpg" alt="Siamese Elephants, four band members standing on an escalator platform"></div>
 <div class="head"><h1 class="logo"><img src="img/logo.png" alt="Siamese Elephants" width="800" height="300"></h1><p class="sub">welcome to the doomscroller club</p><div class="icons"><a href="https://siamese-elephants.bandcamp.com/music" aria-label="Bandcamp"><img src="icons/bandcamp.png" alt="Bandcamp" width="26" height="26" style="display:block;object-fit:contain"></a><a href="https://open.spotify.com/artist/7bgOhFs7p8ZGBMIIORey80" aria-label="Spotify"><img src="icons/spotify.png" alt="Spotify" width="26" height="26" style="display:block;object-fit:contain"></a><a href="https://music.apple.com/at/artist/siamese-elephants/1465891720" aria-label="Apple Music"><img src="icons/apple-music.png" alt="Apple Music" width="26" height="26" style="display:block;object-fit:contain"></a><a href="https://www.instagram.com/siamese.elephants" aria-label="Instagram"><img src="icons/instagram.png" alt="Instagram" width="26" height="26" style="display:block;object-fit:contain"></a><a href="https://www.tiktok.com/@siamese.elephants" aria-label="TikTok"><img src="icons/tiktok.png" alt="TikTokToxic" width="26" height="26" style="display:block;object-fit:contain"></a><a href="https://youtu.be/UPX9JvmRYZw" aria-label="YouTube"><img src="icons/youtube.png" alt="Youtube" width="26" height="26" style="display:block;object-fit:contain"></a><a href="booking.html" aria-label="Booking and contact"><img src="icons/mail.png" alt="Mail" width="26" height="26" style="display:block;object-fit:contain"></a></div></div>
 
 <main>
@@ -653,27 +644,23 @@ const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Dat
 <script>
 (async () => {
   const img = document.getElementById("hero-img");
-  const hero = img.parentElement;
-  const reveal = () => hero.classList.remove("wait");    // shows the photo
-  const timer = setTimeout(reveal, 4000);                 // safety net: never leave the hero empty
-
   let h;
   try {
     const r = await fetch("config/hero.json", { cache: "no-cache" });
     if (!r.ok) throw new Error(r.status);
     h = await r.json();
-  } catch (e) { reveal(); return; }
+  } catch (e) { return; }
 
   if (h.image) img.src = h.image;
   if (h.alt) img.alt = h.alt;
-  if (h.type !== "video") { reveal(); return; }
+  if (h.type !== "video") return;
 
   const clips = (Array.isArray(h.video) ? h.video : [h.video])
     .filter(s => typeof s === "string" && /\.(mp4|webm)(\?|$)/i.test(s));
-  if (!clips.length) { reveal(); return; }
+  if (!clips.length) return;
 
   // keep the photo for visitors who asked for less motion or less data
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches || (navigator.connection || {}).saveData) { reveal(); return; }
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches || (navigator.connection || {}).saveData) return;
 
   const v = document.createElement("video");
   v.muted = true;
@@ -689,14 +676,13 @@ const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Dat
 
   let i = 0;
   v.src = clips[0];
-  v.addEventListener("playing", () => clearTimeout(timer), { once: true });
   v.addEventListener("ended", () => { i = (i + 1) % clips.length; v.src = clips[i]; v.play().catch(() => {}); });
-  v.addEventListener("error", () => { v.remove(); reveal(); });      // photo returns if a clip fails
+  v.addEventListener("error", () => v.remove());        // photo stays if a clip fails
   img.after(v);
 
   // pause when the hero is scrolled out of view (saves battery and data)
   new IntersectionObserver(([e]) => { e.isIntersecting ? v.play().catch(() => {}) : v.pause(); }, { threshold: 0.05 })
-    .observe(hero);
+    .observe(img.parentElement);
 })();
 </script>
 </body></html>
