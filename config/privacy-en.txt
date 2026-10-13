@@ -1,24 +1,21 @@
 # Privacy policy
 
 Controller
-{{Name as in the imprint}}, {{Street and number, postcode}} Vienna, Austria, email: [{{name@example.com}}](mailto:name@example.com). Further details in the [Imprint](imprint) (German).
+{{Name as in the imprint}}, {{Street and number, postcode}} Vienna, Austria, email: [{{name@example.com}}](mailto:name@example.com). Further details can be found in the [Imprint](imprint) (German).
 
 Overview
 This website has no user accounts, no contact form, no advertising and no analytics or tracking tools. We do not set any cookies ourselves.
 
 Hosting
-The website is delivered via GitHub Pages (GitHub, Inc., USA). When you visit, the provider processes technical data such as your IP address, date and time, the requested file and browser information. The legal basis is our legitimate interest in providing the website securely (Art. 6(1)(f) GDPR). Transfers to the USA rely on the provider's arrangements (EU-US Data Privacy Framework or standard contractual clauses). {{Please check that this is still accurate.}}
+The website is delivered via GitHub Pages (GitHub, Inc., USA). When the site is accessed, the provider processes technical data such as the IP address, date and time, the requested file and browser information. The legal basis is our legitimate interest in providing the website securely (Art. 6(1)(f) GDPR).
 
 Third-party services
-When you open the page, content is loaded from Google (fonts, YouTube thumbnails and videos), Bandcamp (music player) and Spreadshirt (merch images). Your browser and device technically transmit data, mainly your IP address, to these providers. The featured video on the home page uses YouTube's enhanced privacy mode. On the "Videos" page the player only loads after a click. The legal basis is our legitimate interest in an appealing presentation of the site (Art. 6(1)(f) GDPR). More information in the privacy policies of [Google](https://policies.google.com/privacy), [Bandcamp](https://bandcamp.com/privacy) and Spreadshirt.
+When the page is accessed, content is loaded from Google (fonts, YouTube thumbnails and videos), Bandcamp (music player) and Spreadshirt (merch images). In doing so, your browser and device transmit data to these providers for technical reasons, mainly the IP address. The featured video on the home page uses YouTube's enhanced privacy mode. On the “Videos” page, the player is only loaded after a click. Further information can be found in the privacy policies of [Google](https://policies.google.com/privacy), [Bandcamp](https://bandcamp.com/privacy) and [Spreadshirt](https://www.spreadshirt.de/datenschutz).
 
 External links
-We link to Bandcamp, Spotify, Apple Music, Instagram, TikTok, YouTube, our merch shop and ticket providers. The privacy policy of the respective provider applies only once you click a link.
+We link to Bandcamp, Spotify, Apple Music, Instagram, TikTok, YouTube, our merch shop and ticket providers. The privacy policy of the respective provider applies only once you click on a link.
 
 Local storage
-The page stores your color scheme in the browser (localStorage) so it looks right immediately on your next visit. The entry stays on your device, contains no personal data and can be deleted in your browser settings.
+The page stores your color scheme in the browser (localStorage) so that it looks right immediately on your next visit. The entry stays on your device, contains no personal data and can be deleted in your browser settings.
 
-Contact by email
-If you write to us, we process your details to answer your request (Art. 6(1)(b) or (f) GDPR). We do not pass them on and delete them when they are no longer needed.
-
-Last updated: {{Month Year}}
+Last updated: {{October 2026}}
