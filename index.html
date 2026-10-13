@@ -86,7 +86,9 @@ main{padding:24px 16px 8px;display:grid;grid-template-columns:minmax(0,1fr);gap:
 .show .w b{display:block}
 .show .w span{color:var(--mut);font-size:14px}
 .show .w em{display:block;font-style:normal;font-size:13px;color:var(--beige);opacity:.75;margin-top:2px}
-.show.sold .btn{background:transparent;color:var(--mut);border:1.5px solid var(--card2);pointer-events:none}
+.btn.s.off{background:transparent;color:var(--mut);border:1.5px solid var(--card2)}
+.btn.s.info{background:transparent;color:var(--beige);border:1.5px solid var(--beige)}
+.btn.s.off,.btn.s.info{padding:6.5px 13.5px;pointer-events:none;cursor:default}
 /* image grids */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:14px}
 .tile{display:block}
@@ -230,12 +232,25 @@ const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Dat
       .filter(s => s._d >= today)
       .sort((a, b) => a._d - b._d);
     if (!shows.length) { box.innerHTML = empty; return; }
+    const STATUS = {
+      soldout:   { label: "Sold out",        cls: "off" },
+      boxoffice: { label: "Box office only", cls: "info" },
+      soon:      { label: "Available soon",  cls: "info" }
+    };
+    const ALIAS = { boxofficeonly: "boxoffice", availablesoon: "soon", comingsoon: "soon", tickets: "available" };
+    const statusOf = s => {
+      const k = String(s.status ?? (s.soldOut ? "soldout" : "available")).toLowerCase().replace(/[^a-z]/g, "");
+      return ALIAS[k] || k;
+    };
     box.innerHTML = shows.map(s => {
       const mon = s._d.toLocaleString("en", { month: "short" }).toUpperCase();
-      const btn = s.tickets
-        ? `<a class="btn s" href="${esc(s.tickets)}" target="_blank" rel="noopener">${s.soldOut ? "Sold out" : "Tickets"}</a>`
-        : "";
-      return `<div class="show${s.soldOut ? " sold" : ""}">
+      const st = STATUS[statusOf(s)];
+      const btn = st
+        ? `<span class="btn s ${st.cls}">${esc(s.statusLabel || st.label)}</span>`
+        : s.tickets
+          ? `<a class="btn s" href="${esc(s.tickets)}" target="_blank" rel="noopener">Tickets</a>`
+          : "";
+      return `<div class="show">
         <div class="d"><b>${s._d.getDate()}</b><span>${mon}</span></div>
         <div class="w"><b>${esc(s.city)}, ${esc(s.country)}</b><span>${esc(s.venue)}</span>${s.note ? `<em>${esc(s.note)}</em>` : ""}</div>
         ${btn}
