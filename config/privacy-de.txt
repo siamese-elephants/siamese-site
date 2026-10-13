@@ -12,7 +12,4 @@ Beim Aufruf der Seite werden Inhalte von Google (Schriften, YouTube-Vorschaubild
 Externe Links
 Wir verlinken auf Bandcamp, Spotify, Apple Music, Instagram, TikTok, YouTube, unseren Merch-Shop und Ticketanbieter. Erst wenn Sie einen Link anklicken, gilt die Datenschutzerklärung des jeweiligen Anbieters.
 
-Lokaler Speicher
-Die Seite speichert im Browser (localStorage) das Farbschema, damit sie beim nächsten Besuch sofort richtig aussieht. Der Eintrag bleibt auf deinem Gerät, enthält keine persönlichen Daten und kann in den Browsereinstellungen gelöscht werden.
-
-Stand: {{Oktober 2026}}
+Stand: Oktober 2026
