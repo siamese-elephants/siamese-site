@@ -112,6 +112,20 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:28px 20px 40px}
 .jump a[hidden]{display:none}
 footer{padding-bottom:96px}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.jump{transition:none}}
+/* burger menu */
+.burger{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));right:max(12px,calc((100vw - 620px)/2 + 12px));z-index:60;width:44px;height:44px;padding:0;border-radius:50%;border:1px solid var(--card2);background:rgba(27,37,30,.8);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:var(--beige);cursor:pointer;display:grid;place-items:center}
+.burger span{grid-area:1/1;width:18px;height:2px;border-radius:2px;background:currentColor;transition:transform .25s,opacity .2s}
+.burger span:nth-child(1){transform:translateY(-6px)}
+.burger span:nth-child(3){transform:translateY(6px)}
+.burger[aria-expanded="true"] span:nth-child(1){transform:rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] span:nth-child(3){transform:rotate(-45deg)}
+.menu{position:fixed;top:calc(64px + env(safe-area-inset-top,0px));right:max(12px,calc((100vw - 620px)/2 + 12px));z-index:60;width:min(240px,calc(100vw - 24px));padding:8px;border-radius:18px;background:var(--card);border:1px solid var(--card2);box-shadow:0 12px 36px rgba(0,0,0,.5);transform-origin:top right;opacity:0;visibility:hidden;transform:translateY(-8px) scale(.97);transition:opacity .2s,transform .2s,visibility .2s}
+.menu.open{opacity:1;visibility:visible;transform:none}
+.menu a{display:block;padding:12px 14px;border-radius:12px;font-weight:500;color:var(--beige)}
+.menu a:hover,.menu a:focus-visible{background:var(--card2);outline:0}
+.credit{right:auto;left:10px}
+@media (prefers-reduced-motion:reduce){.burger span,.menu{transition:none}}
 </style></head><body><div class="wrap">
 
 <div class="hero"><img src="img/SE_hero.jpg" alt="Siamese Elephants, four band members standing on an escalator platform"><span class="credit">Photo: Paul Vincenth Schuetz</span></div>
@@ -487,6 +501,46 @@ footer{padding-bottom:96px}
   addEventListener("scroll", req, { passive: true });
   addEventListener("resize", req);
   update();
+})();
+</script>
+<script>
+(() => {
+  const items = [["news","News"],["shows","Shows"],["music","Music"],["merch","Merch"],["videos","Videos"],["press","Press"],["contact","Booking"]];
+
+  const btn = document.createElement("button");
+  btn.className = "burger";
+  btn.type = "button";
+  btn.setAttribute("aria-label", "Menu");
+  btn.setAttribute("aria-expanded", "false");
+  btn.setAttribute("aria-controls", "site-menu");
+  btn.innerHTML = "<span></span><span></span><span></span>";
+
+  const menu = document.createElement("nav");
+  menu.className = "menu";
+  menu.id = "site-menu";
+  menu.setAttribute("aria-label", "Sections");
+
+  document.body.append(btn, menu);
+
+  const build = () => {
+    menu.innerHTML = items
+      .filter(([id]) => { const s = document.getElementById(id); return s && !s.hidden; })
+      .map(([id, l]) => `<a href="#${id}">${l}</a>`).join("");
+  };
+  const setOpen = v => {
+    if (v) build();
+    menu.classList.toggle("open", v);
+    btn.setAttribute("aria-expanded", v);
+  };
+
+  btn.addEventListener("click", () => setOpen(btn.getAttribute("aria-expanded") !== "true"));
+  menu.addEventListener("click", e => { if (e.target.closest("a")) setOpen(false); });
+  document.addEventListener("click", e => {
+    if (!menu.contains(e.target) && !btn.contains(e.target)) setOpen(false);
+  });
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && menu.classList.contains("open")) { setOpen(false); btn.focus(); }
+  });
 })();
 </script>
 </body></html>
