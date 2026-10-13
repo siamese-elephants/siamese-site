@@ -135,18 +135,15 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:28px 20px 96px}
 /* desktop: same single column, a bit more generous */
 @media (min-width:900px){
   .wrap{max-width:720px}
-  . img{max-height:480px}
+  .hero img{max-height:480px}
   .logo img{width:min(100%,420px);max-height:170px}
   .burger,.menu{right:calc((100vw - 720px)/2 + 12px)}
   .jump{display:none}
 }
-/* floating bandcamp preview (desktop only) */
 /* floating bandcamp player (desktop only) */
 .bc{display:none;position:fixed;z-index:40;bottom:24px;right:calc(50% + 400px);width:var(--bcw,460px);padding:0;margin:0;border:0;border-radius:0;background:none;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
 .bc.on{display:block}
 .bc iframe{display:block;border:0;width:100%}
-@media (min-width:1280px){.bc{display:block}}
-@media (prefers-reduced-motion:reduce){.bc-b,.bc-h svg{transition:none}}
 .hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top}
 
 /* videos preview */
@@ -567,7 +564,6 @@ const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Dat
         ? `<a href="${pages[id]}">${l} <span aria-hidden="true">→</span></a>`
         : `<a href="#${id}">${l}</a>`
       ).join("");
-  };
   };
   const setOpen = v => {
     if (v) build();
