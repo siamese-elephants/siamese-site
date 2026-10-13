@@ -563,4 +563,46 @@ const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Dat
   });
 })();
 </script>
+<script>
+(async () => {
+  let cfg;
+  try {
+    const r = await fetch("config/bandcamp.json", { cache: "no-cache" });
+    if (!r.ok) throw new Error(r.status);
+    cfg = await r.json();
+  } catch (e) { return; }
+  if (!/^\d{5,12}$/.test(String(cfg.albumId || ""))) return;
+
+  const box = document.createElement("aside");
+  box.className = "bc";
+  box.setAttribute("aria-label", "Album preview");
+  box.innerHTML = `<button class="bc-h" type="button" aria-expanded="true"><span>${esc(cfg.title || "Listen")}</span><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4.5 6 8.5l4-4"/></svg></button><div class="bc-b"></div>`;
+  document.body.appendChild(box);
+
+  const head = box.querySelector(".bc-h");
+  const body = box.querySelector(".bc-b");
+  const css = getComputedStyle(document.documentElement);
+  const hex = (v, d) => /^#[0-9a-f]{6}$/i.test(v.trim()) ? v.trim().slice(1) : d;
+  const mq = matchMedia("(min-width:1200px)");
+
+  const build = () => {
+    if (body.firstChild || !mq.matches) return;   // only load on wide screens, and only once
+    const bg = hex(css.getPropertyValue("--card"), "1b251e");
+    const link = hex(css.getPropertyValue("--beige"), "e9dfc8");
+    const ifr = document.createElement("iframe");
+    ifr.src = `https://bandcamp.com/EmbeddedPlayer/album=${cfg.albumId}/size=large/bgcol=${bg}/linkcol=${link}/tracklist=${cfg.tracklist ? "true" : "false"}/artwork=small/transparent=true/`;
+    ifr.title = "Bandcamp player";
+    ifr.loading = "lazy";
+    ifr.style.height = (Number(cfg.height) || 120) + "px";
+    body.appendChild(ifr);
+  };
+
+  head.addEventListener("click", () => {
+    const min = box.classList.toggle("min");
+    head.setAttribute("aria-expanded", !min);
+  });
+  mq.addEventListener("change", build);
+  build();
+})();
+</script>
 </body></html>
