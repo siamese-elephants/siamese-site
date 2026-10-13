@@ -26,7 +26,7 @@ h1{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:clamp(
 .bn{font-family:"DM Serif Display",Georgia,serif;font-size:26px;line-height:1.15;margin:0}
 .bco{margin:2px 0 0;color:var(--mut);font-size:14px}
 .bfor{margin:20px 0 8px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);font-weight:500}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:18px 0 0;padding:0;list-style:none}
 .chips li{border:1px solid var(--card2);border-radius:99px;padding:3px 12px;font-size:14px;color:var(--soft)}
 .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
 .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:99px;border:1.5px solid var(--beige);background:var(--beige);color:var(--ink);font:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s}
@@ -120,7 +120,7 @@ footer{margin-top:44px;text-align:center;color:var(--mut);font-size:13px}
       return `<article class="bcard">
         <h2 class="bn">${esc(c.name)}</h2>
         ${c.company ? `<p class="bco">${esc(c.company)}</p>` : ""}
-        ${countries.length ? `<p class="bfor">Books for</p><ul class="chips">${countries.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
+        ${countries.length ? `<ul class="chips">${countries.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
         ${acts.length ? `<div class="actions">${acts.join("")}</div>` : ""}
       </article>`;
     }).join("");
