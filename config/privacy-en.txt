@@ -1,8 +1,5 @@
 # Privacy policy
 
-Controller
-{{Name as in the imprint}}, {{Street and number, postcode}} Vienna, Austria, email: [{{name@example.com}}](mailto:name@example.com). Further details can be found in the [Imprint](imprint) (German).
-
 Overview
 This website has no user accounts, no contact form, no advertising and no analytics or tracking tools. We do not set any cookies ourselves.
 
