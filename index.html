@@ -148,6 +148,11 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:28px 20px 96px}
 @media (min-width:1280px){.bc{display:block}}
 @media (prefers-reduced-motion:reduce){.bc-b,.bc-h svg{transition:none}}
 .hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top}
+
+/* videos preview */
+.vstrip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.vstrip img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:10px;background:var(--card2);transition:.15s}
+.vstrip a:hover img{transform:translateY(-3px);opacity:.92}
 </style>
 
 <!-- shared helpers + color theme (config/theme.json) -->
@@ -429,20 +434,32 @@ const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Dat
 })();
 </script>
 
-<!-- ===== VIDEOS (config/videos.json) ===== -->
+<!-- ===== VIDEOS (config/videos.json, full gallery on videos.html) ===== -->
 <section class="card" id="videos" hidden><h2>Videos</h2>
-  <ul class="list" id="videos-list"></ul>
+  <div class="vstrip" id="videos-strip"></div>
+  <a class="btn o" href="videos.html">All videos</a>
 </section>
 <script>
 (async () => {
-  const list = document.getElementById("videos-list");
+  const strip = document.getElementById("videos-strip");
+  const ytId = u => {
+    try {
+      const x = new URL(u), h = x.hostname.replace(/^www\.|^m\./, "");
+      let id = "";
+      if (h === "youtu.be") id = x.pathname.slice(1).split("/")[0];
+      else if (h.endsWith("youtube.com")) id = x.searchParams.get("v") || (x.pathname.match(/^\/(?:embed|shorts|live)\/([^/]+)/) || [])[1] || "";
+      return /^[\w-]{11}$/.test(id) ? id : "";
+    } catch (e) { return ""; }
+  };
   try {
     const r = await fetch("config/videos.json", { cache: "no-cache" });
     if (!r.ok) throw new Error(r.status);
-    const items = await r.json();
-    if (!items.length) return;
-    list.innerHTML = items.map(v =>
-      `<li><a href="${esc(v.url)}" target="_blank" rel="noopener">${esc(v.title)}</a><span>↗</span></li>`
+    const vids = (await r.json())
+      .map(v => ({ ...v, id: /^[\w-]{11}$/.test(v.youtubeId || "") ? v.youtubeId : ytId(v.url || "") }))
+      .filter(v => v.id);
+    if (!vids.length) return;
+    strip.innerHTML = vids.slice(0, 3).map(v =>
+      `<a href="videos.html" aria-label="${esc(v.title)}"><img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="" loading="lazy"></a>`
     ).join("");
     document.getElementById("videos").hidden = false;
   } catch (err) {}
