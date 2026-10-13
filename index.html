@@ -139,6 +139,17 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:28px 20px 96px}
   .burger,.menu{right:calc((100vw - 720px)/2 + 12px)}
   .jump{display:none}
 }
+/* floating bandcamp preview (desktop only) */
+.bc{display:none;position:fixed;z-index:40;bottom:24px;left:calc(50% + 380px);width:min(300px,calc(50vw - 360px - 36px));padding:6px;border-radius:18px;background:color-mix(in srgb,var(--card) 80%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid var(--card2);box-shadow:0 12px 36px rgba(0,0,0,.4)}
+.bc-h{display:flex;align-items:center;justify-content:space-between;width:100%;padding:8px 10px;background:none;border:0;font:inherit;font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);cursor:pointer;transition:color .2s}
+.bc-h:hover,.bc-h:focus-visible{color:var(--beige)}
+.bc-h svg{width:12px;height:12px;transition:transform .3s}
+.bc.min .bc-h svg{transform:rotate(180deg)}
+.bc-b{max-height:700px;overflow:hidden;transition:max-height .3s ease}
+.bc.min .bc-b{max-height:0}
+.bc-b iframe{display:block;width:100%;border:0;border-radius:12px}
+@media (min-width:1200px){.bc{display:block}}
+@media (prefers-reduced-motion:reduce){.bc-b,.bc-h svg{transition:none}}
 </style>
 
 <!-- shared helpers + color theme (config/theme.json) -->
