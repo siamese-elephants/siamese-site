@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Datenschutzerklärung · Siamese Elephants</title>
+<link rel="canonical" href="https://siamese-elephants.com/privacy">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0b100d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b100d;--card:#1b251e;--card2:#26332a;--green:#505a4f;--beige:#e9dfc8;--mut:#e6e5e8;--ink:#141a15;--ink2:#4b5448;--soft:#cfc7b0;--hover:#fff;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{overflow-x:clip}
+body{margin:0;background:var(--bg);color:var(--soft);font:14px/1.6 "DM Sans",system-ui,sans-serif}
+a{color:inherit;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+a:hover{color:var(--hover)}
+.wrap{max-width:680px;margin:0 auto;padding:18px 16px 40px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px}
+.back{display:inline-flex;align-items:center;gap:8px;padding:7px 13px 7px 11px;border:1px solid var(--card2);border-radius:99px;font-size:13px;font-weight:500;color:var(--mut);text-decoration:none;transition:color .2s,border-color .2s}
+.back:hover,.back:focus-visible{color:var(--beige);border-color:var(--beige);outline:0}
+.brand img{display:block;height:32px;width:auto}
+.titlebar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px 16px;margin-bottom:16px}
+h1{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:clamp(28px,6vw,36px);line-height:1.1;color:var(--beige);margin:0}
+.lang{display:inline-flex;padding:3px;border:1px solid var(--card2);border-radius:99px}
+.lang button{padding:4px 12px;border:0;border-radius:99px;background:none;color:var(--mut);font:inherit;font-size:12px;font-weight:700;letter-spacing:.08em;cursor:pointer;transition:background .2s,color .2s}
+.lang button:hover,.lang button:focus-visible{color:var(--beige);outline:0}
+.lang button[aria-pressed="true"]{background:var(--beige);color:var(--ink)}
+p{margin:0 0 12px}
+b{color:var(--beige);font-weight:700}
+.todo{background:color-mix(in srgb,var(--beige) 16%,transparent);color:var(--beige);padding:0 4px;border-radius:4px}
+footer{margin-top:28px;color:var(--mut);font-size:12px}
+@media (prefers-reduced-motion:reduce){.back,.lang button{transition:none}}
+</style>
+
+<!-- Farbthema / color theme (config/theme.json), wie auf den anderen Seiten -->
+<script>
+(() => {
+  const MAP = {background:"--bg",card:"--card",cardAlt:"--card2",hero:"--green",accent:"--beige",muted:"--mut",ink:"--ink",inkSoft:"--ink2",softText:"--soft",hover:"--hover"};
+  const root = document.documentElement;
+  const apply = t => {
+    for (const [key, cssVar] of Object.entries(MAP)) {
+      const v = t[key];
+      if (v && CSS.supports("color", v)) root.style.setProperty(cssVar, v);
+      else root.style.removeProperty(cssVar);
+    }
+    if (t.background) document.querySelector('meta[name="theme-color"]')?.setAttribute("content", t.background);
+  };
+  try { const c = localStorage.getItem("se-theme"); if (c) apply(JSON.parse(c)); } catch (e) {}
+  fetch("config/theme.json", { cache: "no-cache" })
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(t => { apply(t); try { localStorage.setItem("se-theme", JSON.stringify(t)); } catch (e) {} })
+    .catch(() => {});
+})();
+</script>
+</head><body>
+<div class="wrap">
+
+<header class="top">
+  <a class="back" href="./"><span aria-hidden="true">←</span> <span id="t-back">Zurück zur Seite</span></a>
+  <a class="brand" href="./" aria-label="Siamese Elephants"><img src="img/logo.png" alt="Siamese Elephants" width="800" height="300"></a>
+</header>
+
+<main>
+  <div class="titlebar">
+    <h1 id="t-title">Datenschutzerklärung</h1>
+    <div class="lang" role="group" aria-label="Sprache / Language">
+      <button type="button" data-set="de" aria-pressed="true">DE</button>
+      <button type="button" data-set="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+
+  <div id="body"><p>Lädt …</p></div>
+  <noscript><p>Bitte JavaScript aktivieren, um die Datenschutzerklärung zu lesen, oder schreib uns eine E-Mail. / Please enable JavaScript to read the privacy policy, or send us an email.</p></noscript>
+</main>
+
+<footer>© Siamese Elephants · <span id="t-city">Wien</span> · <a href="imprint" id="t-imprint">Impressum</a></footer>
+</div>
+
+<script>
+(() => {
+  // The text itself lives in config/privacy-de.txt and config/privacy-en.txt.
+  // Only these short labels live here.
+  const UI = {
+    de: { title: "Datenschutzerklärung", back: "Zurück zur Seite", city: "Wien",    imprint: "Impressum" },
+    en: { title: "Privacy policy",       back: "Back to site",     city: "Vienna",  imprint: "Imprint (German)" }
+  };
+
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+  // [link text](url) makes a link, {{text}} marks a placeholder that still has to be replaced
+  const fmt = s => esc(s)
+    .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, t, u) => {
+      const ext = /^https?:\/\//i.test(u);
+      if (!(ext || /^mailto:[^\s]+$/i.test(u) || /^[\w./#-]+$/.test(u))) return m;
+      return `<a href="${u}"${ext ? ' target="_blank" rel="noopener"' : ""}>${t}</a>`;
+    })
+    .replace(/\{\{(.+?)\}\}/g, '<mark class="todo">$1</mark>');
+
+  // blocks are separated by a blank line.
+  // "# Title" on the first line = page title. A block with 2+ lines = bold title + text. A one-line block = plain paragraph.
+  const parse = raw => {
+    const blocks = raw.replace(/\r\n?/g, "\n").trim().split(/\n\s*\n/);
+    let title = "";
+    if (blocks.length && /^#\s+/.test(blocks[0])) title = blocks.shift().replace(/^#\s+/, "").trim();
+    const html = blocks.map(b => {
+      const lines = b.split("\n").map(l => l.trim()).filter(Boolean);
+      if (!lines.length) return "";
+      if (lines.length === 1) return `<p>${fmt(lines[0])}</p>`;
+      return `<p><b>${esc(lines[0])}.</b> ${fmt(lines.slice(1).join(" "))}</p>`;
+    }).join("");
+    return { title, html };
+  };
+
+  const $ = id => document.getElementById(id);
+  const buttons = [...document.querySelectorAll(".lang button")];
+  const cache = {};
+  const load = async lang => {
+    if (cache[lang]) return cache[lang];
+    const r = await fetch(`config/privacy-${lang}.txt`, { cache: "no-cache" });
+    if (!r.ok) throw new Error(r.status);
+    return (cache[lang] = parse(await r.text()));
+  };
+
+  let current = 0;
+  const render = async (lang, remember) => {
+    const id = ++current;
+    let used = lang, page;
+    try { page = await load(lang); }
+    catch (e) {
+      try { used = "de"; page = await load("de"); }
+      catch (e2) { $("body").innerHTML = "<p>Die Datenschutzerklärung konnte nicht geladen werden. / The privacy policy could not be loaded.</p>"; return; }
+    }
+    if (id !== current) return;                       // a newer click wins
+    const ui = UI[lang] || UI.de;
+    document.documentElement.lang = used;
+    document.title = (page.title || ui.title) + " · Siamese Elephants";
+    $("t-title").textContent = page.title || ui.title;
+    $("t-back").textContent = ui.back;
+    $("t-city").textContent = ui.city;
+    $("t-imprint").textContent = ui.imprint;
+    $("body").innerHTML = page.html;
+    buttons.forEach(b => b.setAttribute("aria-pressed", b.dataset.set === lang));
+    if (remember) history.replaceState(null, "", "#" + lang);   // shareable as privacy#en
+  };
+
+  buttons.forEach(b => b.addEventListener("click", () => render(b.dataset.set, true)));
+  const fromHash = () => (location.hash === "#en" ? "en" : "de");
+  addEventListener("hashchange", () => render(fromHash(), false));
+  render(fromHash(), false);
+})();
+</script>
+</body></html>
