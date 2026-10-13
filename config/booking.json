@@ -1,0 +1,22 @@
+{
+  "intro": "For booking requests, festival inquiries and press, find the contact for your country below.",
+  "contacts": [
+    {
+      "name": "Niklas Mayr",
+      "company": "Assim Live",
+      "countries": ["Austria", "Germany", "Switzerland"],
+      "email": "booking@example.com",
+      "phone": "+43 000 0000000",
+      "website": "https://example.com"
+    },
+    {
+      "name": "Rest of world",
+      "countries": "Worldwide",
+      "email": "band@example.com"
+    }
+  ],
+  "downloads": [
+    { "label": "Press kit (PDF)", "url": "press/presskit.pdf" },
+    { "label": "Tech rider", "url": "press/rider.pdf" }
+  ]
+}
