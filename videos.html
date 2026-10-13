@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Videos · Siamese Elephants</title>
+<link rel="canonical" href="https://siamese-elephants.com/videos.html">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0b100d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b100d;--card:#1b251e;--card2:#26332a;--green:#505a4f;--beige:#e9dfc8;--mut:#e6e5e8;--ink:#141a15;--ink2:#4b5448;--soft:#cfc7b0;--hover:#fff;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html,body{overflow-x:clip}
+body{margin:0;background:var(--bg);color:var(--beige);font:16px/1.55 "DM Sans",system-ui,sans-serif}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:980px;margin:0 auto;padding:18px 16px 48px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px}
+.back{display:inline-flex;align-items:center;gap:8px;padding:8px 14px 8px 12px;border:1px solid var(--card2);border-radius:99px;font-size:14px;font-weight:500;color:var(--mut);transition:color .2s,border-color .2s}
+.back:hover,.back:focus-visible{color:var(--beige);border-color:var(--beige);outline:0}
+.brand img{display:block;height:38px;width:auto}
+h1{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:clamp(36px,8vw,56px);line-height:1;margin:0 0 24px}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:18px}
+.vcard{background:var(--card);border-radius:18px;padding:12px 12px 18px;min-width:0}
+.vthumb,.vframe{position:relative;display:block;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:var(--card2)}
+.vthumb{padding:0;border:0;cursor:pointer;font:inherit;color:var(--beige)}
+.vthumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .35s ease,opacity .2s}
+.vthumb:hover img,.vthumb:focus-visible img{transform:scale(1.03);opacity:.9}
+.vthumb:focus-visible{outline:2px solid var(--beige);outline-offset:3px}
+.play{position:absolute;left:50%;top:50%;width:62px;height:62px;margin:-31px 0 0 -31px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--bg) 62%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid color-mix(in srgb,var(--beige) 35%,transparent);transition:background .2s,transform .2s}
+.play svg{width:26px;height:26px;margin-left:3px}
+.vthumb:hover .play,.vthumb:focus-visible .play{background:var(--beige);color:var(--ink);transform:scale(1.06)}
+.vframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vcard h2{margin:14px 6px 0;font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:21px;line-height:1.25}
+.vmeta{margin:4px 6px 0;color:var(--mut);font-size:14px}
+.msg{color:var(--mut)}
+footer{margin-top:40px;text-align:center;color:var(--mut);font-size:13px}
+@media (prefers-reduced-motion:reduce){.vthumb img,.play,.back{transition:none}}
+</style>
+
+<!-- color theme (config/theme.json), same as the homepage -->
+<script>
+(() => {
+  const MAP = {background:"--bg",card:"--card",cardAlt:"--card2",hero:"--green",accent:"--beige",muted:"--mut",ink:"--ink",inkSoft:"--ink2",softText:"--soft",hover:"--hover"};
+  const root = document.documentElement;
+  const apply = t => {
+    for (const [key, cssVar] of Object.entries(MAP)) {
+      const v = t[key];
+      if (v && CSS.supports("color", v)) root.style.setProperty(cssVar, v);
+      else root.style.removeProperty(cssVar);
+    }
+    if (t.background) document.querySelector('meta[name="theme-color"]')?.setAttribute("content", t.background);
+  };
+  try { const c = localStorage.getItem("se-theme"); if (c) apply(JSON.parse(c)); } catch (e) {}
+  fetch("config/theme.json", { cache: "no-cache" })
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(t => { apply(t); try { localStorage.setItem("se-theme", JSON.stringify(t)); } catch (e) {} })
+    .catch(() => {});
+})();
+</script>
+</head><body>
+<div class="wrap">
+
+<header class="top">
+  <a class="back" href="./"><span aria-hidden="true">←</span> Back to site</a>
+  <a class="brand" href="./" aria-label="Siamese Elephants, home"><img src="img/logo.png" alt="Siamese Elephants" width="800" height="300"></a>
+</header>
+
+<main>
+  <h1>Videos</h1>
+  <div class="vgrid" id="vgrid"><p class="msg">Loading videos…</p></div>
+</main>
+
+<footer>© Siamese Elephants · Vienna</footer>
+</div>
+
+<script>
+(async () => {
+  const grid = document.getElementById("vgrid");
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+  // take the video ID from a normal YouTube link (youtu.be, watch?v=, embed, shorts, live)
+  const ytId = u => {
+    try {
+      const x = new URL(u);
+      const h = x.hostname.replace(/^www\.|^m\./, "");
+      let id = "";
+      if (h === "youtu.be") id = x.pathname.slice(1).split("/")[0];
+      else if (h.endsWith("youtube.com") || h.endsWith("youtube-nocookie.com")) {
+        id = x.searchParams.get("v") || (x.pathname.match(/^\/(?:embed|shorts|live)\/([^/]+)/) || [])[1] || "";
+      }
+      return /^[\w-]{11}$/.test(id) ? id : "";
+    } catch (e) { return ""; }
+  };
+
+  let items;
+  try {
+    const r = await fetch("config/videos.json", { cache: "no-cache" });
+    if (!r.ok) throw new Error(r.status);
+    items = await r.json();
+  } catch (e) {
+    grid.innerHTML = '<p class="msg">Couldn\'t load the videos right now.</p>';
+    return;
+  }
+
+  const vids = items
+    .map(v => ({ ...v, id: /^[\w-]{11}$/.test(v.youtubeId || "") ? v.youtubeId : ytId(v.url || "") }))
+    .filter(v => v.id);
+  if (!vids.length) { grid.innerHTML = '<p class="msg">No videos yet.</p>'; return; }
+
+  grid.innerHTML = vids.map(v => {
+    const meta = [v.year, v.note].filter(Boolean).join(" · ");
+    return `<article class="vcard">
+      <button class="vthumb" type="button" data-id="${v.id}" data-title="${esc(v.title)}" aria-label="Play: ${esc(v.title)}">
+        <img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="" loading="lazy">
+        <span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg></span>
+      </button>
+      <h2>${esc(v.title)}</h2>${meta ? `<p class="vmeta">${esc(meta)}</p>` : ""}
+    </article>`;
+  }).join("");
+
+  // load the YouTube player only when a thumbnail is clicked
+  grid.addEventListener("click", e => {
+    const b = e.target.closest(".vthumb");
+    if (!b) return;
+    const frame = document.createElement("div");
+    frame.className = "vframe";
+    const ifr = document.createElement("iframe");
+    ifr.src = `https://www.youtube-nocookie.com/embed/${b.dataset.id}?autoplay=1&rel=0`;
+    ifr.title = b.dataset.title || "Video";
+    ifr.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+    ifr.allowFullscreen = true;
+    ifr.referrerPolicy = "strict-origin-when-cross-origin";
+    frame.appendChild(ifr);
+    b.replaceWith(frame);
+  });
+})();
+</script>
+</body></html>
