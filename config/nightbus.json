@@ -1,0 +1,7 @@
+{
+  "title": "Nightline",
+  "max": 10,
+  "stops": [
+    { "id": 1234, "name": "Kagraner Platz" }
+  ]
+}
