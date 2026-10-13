@@ -15,4 +15,4 @@ We link to Bandcamp, Spotify, Apple Music, Instagram, TikTok, YouTube, our merch
 Local storage
 The page stores your color scheme in the browser (localStorage) so that it looks right immediately on your next visit. The entry stays on your device, contains no personal data and can be deleted in your browser settings.
 
-Last updated: {{October 2026}}
+Last updated: October 2026
