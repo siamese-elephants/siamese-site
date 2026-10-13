@@ -567,75 +567,44 @@ const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Dat
 
 <script>
 (async () => {
-  let cfg;
+  let src, W = 350, H = 120;
   try {
-    const r = await fetch("config/bandcamp.json", { cache: "no-cache" });
+    const r = await fetch("config/bandcamp.html", { cache: "no-cache" });
     if (!r.ok) throw new Error(r.status);
-    cfg = await r.json();
-  } catch (e) { return; }
-  if (!/^\d{5,12}$/.test(String(cfg.albumId || ""))) return;
+    const f = new DOMParser().parseFromString(await r.text(), "text/html").querySelector("iframe");
+    if (!f) return;
+    src = f.getAttribute("src") || "";
+    if (!/^https:\/\/bandcamp\.com\/EmbeddedPlayer\//.test(src)) return;   // only accept Bandcamp's player
 
-  const W = Number(cfg.width) || 300;
-  const H = Number(cfg.height) || 120;
-  const TOP_ZONE = 40;     // px from the top that count as "at the top"
-  const PASS_AT = 0.3;     // unfold when the Featured card's bottom edge rises above 30% of the window height
+    const st = f.getAttribute("style") || "";
+    const px = (re, attr) => parseFloat((st.match(re) || [])[1]) || parseFloat(f.getAttribute(attr)) || 0;
+    W = px(/(?:^|[;\s])width:\s*([\d.]+)px/i, "width") || W;      // "100%" widths fall back to 350
+    H = px(/(?:^|[;\s])height:\s*([\d.]+)px/i, "height") || H;
+  } catch (e) { return; }
 
   const box = document.createElement("aside");
-  box.className = "bc min";                      // starts collapsed
+  box.className = "bc";
   box.style.setProperty("--bcw", W + "px");
   box.setAttribute("aria-label", "Album preview");
-  box.innerHTML = `<button class="bc-h" type="button" aria-expanded="false"><span>${esc(cfg.title || "Listen")}</span><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4.5 6 8.5l4-4"/></svg></button><div class="bc-b"></div>`;
   document.body.appendChild(box);
 
-  const head = box.querySelector(".bc-h");
-  const body = box.querySelector(".bc-b");
-  const css = getComputedStyle(document.documentElement);
-  const hex = (v, d) => /^#[0-9a-f]{6}$/i.test(v.trim()) ? v.trim().slice(1) : d;
-
-  const setMin = min => {
-    box.classList.toggle("min", min);
-    head.setAttribute("aria-expanded", !min);
-  };
-
   const build = () => {
-    if (body.firstChild) return;
-    const bg = hex(css.getPropertyValue("--card"), "1b251e");
-    const link = hex(css.getPropertyValue("--beige"), "e9dfc8");
+    if (box.firstChild) return;
     const ifr = document.createElement("iframe");
-    ifr.src = `https://bandcamp.com/EmbeddedPlayer/album=${cfg.albumId}/size=large/bgcol=${bg}/linkcol=${link}/tracklist=false/artwork=small/transparent=true/`;
+    ifr.src = src;
     ifr.title = "Bandcamp player";
-    ifr.style.cssText = `display:block;border:0;border-radius:12px;width:100%;height:${H}px`;
-    body.appendChild(ifr);
+    ifr.style.cssText = `display:block;border:0;width:100%;height:${H}px`;
+    box.appendChild(ifr);
   };
 
   // show only if there is room to the left of the column
   const fit = () => {
-    const ok = innerWidth / 2 >= 400 + W + 12 + 20 && innerHeight >= H + 90;
+    const ok = innerWidth / 2 >= 400 + W + 20 && innerHeight >= H + 90;
     box.classList.toggle("on", ok);
     if (ok) build();
   };
-
-  // auto fold / unfold, only at the moment a boundary is crossed,
-  // so a manual click is never overridden while the user keeps scrolling
-  let wasTop = true, wasPassed = false, ticking = false;
-  const auto = () => {
-    ticking = false;
-    const atTop = scrollY < TOP_ZONE;
-    const f = document.getElementById("featured");
-    const target = f && !f.hidden ? f : document.getElementById("shows");
-    const passed = !!target && target.getBoundingClientRect().bottom < innerHeight * PASS_AT;
-    if (atTop && !wasTop) setMin(true);
-    else if (passed && !wasPassed) setMin(false);
-    wasTop = atTop;
-    wasPassed = passed;
-  };
-  const req = () => { if (!ticking) { ticking = true; requestAnimationFrame(auto); } };
-
-  head.addEventListener("click", () => setMin(!box.classList.contains("min")));
-  addEventListener("scroll", req, { passive: true });
-  addEventListener("resize", () => { fit(); req(); });
+  addEventListener("resize", fit);
   fit();
-  auto();
 })();
 </script>
 </body></html>
