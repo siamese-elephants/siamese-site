@@ -1,8 +1,5 @@
 # Datenschutzerklärung
 
-Verantwortlicher
-{{Name wie im Impressum}}, {{Straße und Hausnummer, PLZ}} Wien, Österreich, E-Mail: [{{name@example.com}}](mailto:name@example.com). Weitere Angaben im [Impressum](imprint).
-
 Überblick
 Diese Website hat keine Benutzerkonten, kein Kontaktformular, keine Werbung und keine Analyse- oder Tracking-Tools. Wir setzen selbst keine Cookies.
 
