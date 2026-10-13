@@ -2,18 +2,18 @@
   {
     "date": "2026-10-29",
     "city": "Vienna",
-    "country": "Austria",
+    "country": "AT",
     "venue": "Flucc Wanne",
     "note": "w/ Cassies",
     "tickets": "https://fienta.com/de/cassies-flucc",
     "soldOut": false
   },
   {
-    "date": "2026-12-03",
-    "city": "Test City",
-    "country": "Austria",
-    "venue": "Another venue",
-    "tickets": "https://example.com/tickets",
-    "soldOut": true
+    "date": "2027-02-12",
+    "city": "Vienna",
+    "country": "AT",
+    "venue": "Lucia",
+    "tickets": "https://www.clublucia.at",
+    "soldOut": false
   }
 ]
