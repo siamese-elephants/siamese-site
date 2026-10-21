@@ -4,6 +4,15 @@
     "title": "WHITE FLAG OUT NOW",
     "text": "Five tracks, available now on Bandcamp and all streaming platforms.",
     "link": "https://siamese-elephants.bandcamp.com/album/white-flag",
-    "linkText": "Listen now →"
+    "linkText": "Listen now →",
+    "show": true
+  },
+  {
+    "date": "2026-04-10",
+    "title": "WHITE FLAG OUT NOW",
+    "text": "Beispieltext hier",
+    "link": "https://siamese-elephants.bandcamp.com/album/white-flag",
+    "linkText": "Listen now →",
+    "show": false
   }
 ]
