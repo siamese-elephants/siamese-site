@@ -6,7 +6,8 @@
     "venue": "Flucc Wanne",
     "note": "w/ Cassies",
     "tickets": "https://fienta.com/de/cassies-flucc",
-    "status": ""
+    "status": "",
+    "show": true
   },
   {
     "date": "2027-02-12",
@@ -14,6 +15,7 @@
     "country": "AT",
     "venue": "Club Lucia",
     "tickets": "",
-    "status": "soon"
+    "status": "soon",
+    "show": true
   }
 ]
