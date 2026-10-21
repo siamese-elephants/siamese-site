@@ -17,5 +17,14 @@
     "tickets": "",
     "status": "soon",
     "show": true
+  },
+  {
+    "date": "2027-05-12",
+    "city": "Woanders",
+    "country": "AT",
+    "venue": "Platzhalter",
+    "tickets": "",
+    "status": "soon",
+    "show": false
   }
 ]
