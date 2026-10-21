@@ -13,6 +13,14 @@
     "text": "Beispieltext hier",
     "link": "https://siamese-elephants.bandcamp.com/album/white-flag",
     "linkText": "Listen now →",
-    "show": false
+    "show": true
+  },
+  {
+    "date": "2026-10-21",
+    "title": "LONGER ANNOUNCEMENT",
+    "text": "This text here describes the longer announcement, which probably goes over 4 rows so that means that the user can click on this announcement and expand it in a pop up window. \n Hopefully this break really works and the text is now long enough.",
+    "link": "https://siamese-elephants.bandcamp.com/album/white-flag",
+    "linkText": "Check it out here →",
+    "show": true
   }
 ]
