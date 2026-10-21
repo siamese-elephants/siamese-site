@@ -230,7 +230,7 @@ const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Dat
   const track = document.getElementById("news-track");
   const bar = document.getElementById("news-bar");
   const SECONDS = 7;      // default display time per announcement
-  const ROWS = 4;         // text rows before "Read more" appears
+  const ROWS = 2;         // text rows before "Read more" appears
   try {
     const r = await fetch("config/announcements.json", { cache: "no-cache" });
     if (!r.ok) throw new Error(r.status);
