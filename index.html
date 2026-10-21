@@ -79,15 +79,12 @@ main{padding:24px 16px 8px;display:grid;grid-template-columns:minmax(0,1fr);gap:
 .nview{overflow:hidden}
 .ntrack{display:flex;transition:transform .6s ease}
 .ntrack .ann{flex:0 0 100%;margin:0}
-.nbar{display:flex;gap:6px;margin-top:16px}
-.nbar button{flex:1;height:14px;padding:0;border:0;background:none;cursor:pointer;display:flex;align-items:center}
-.nbar button span{display:block;width:100%;height:3px;border-radius:3px;background:var(--card2);overflow:hidden}
-.nbar button i{display:block;height:100%;width:0;background:var(--beige)}
-.nbar button.done i{width:100%}
-.nbar button.on i{animation:nfill var(--dur,7000ms) linear forwards}
-.news.paused .nbar button.on i{animation-play-state:paused}
+.nbar{margin-top:16px;height:3px;border-radius:3px;background:var(--card2);overflow:hidden}
+.nbar i{display:block;height:100%;width:0;background:var(--beige)}
+.nbar.run i{animation:nfill var(--dur,7000ms) linear forwards}
+.news.paused .nbar.run i{animation-play-state:paused}
 @keyframes nfill{from{width:0}to{width:100%}}
-@media (prefers-reduced-motion:reduce){.ntrack{transition:none}.nbar button.on i{animation:none;width:100%}}
+@media (prefers-reduced-motion:reduce){.ntrack{transition:none}.nbar.run i{animation:none;width:100%}}
 /* announcements: text clamp + "read more" popup */
 .ann .atext{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:var(--rows,4);line-clamp:var(--rows,4);overflow:hidden;white-space:pre-line}
 .aact{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:8px}
@@ -222,7 +219,7 @@ const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Dat
 <!-- ===== ANNOUNCEMENTS (config/announcements.json) ===== -->
 <section class="card news" id="news" hidden><h2>Announcements</h2>
   <div class="nview"><div class="ntrack" id="news-track"></div></div>
-  <div class="nbar" id="news-bar"></div>
+  <div class="nbar" id="news-bar" aria-hidden="true"><i></i></div>
 </section>
 <script>
 (async () => {
@@ -289,31 +286,22 @@ const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Dat
       if (b) openModal(Number(b.dataset.k));
     });
 
-    // carousel
-    const segs = [];
+    // carousel with one loading bar
     let i = 0;
     const go = n => {
       i = (n + items.length) % items.length;
       track.style.transform = `translateX(-${i * 100}%)`;
       slides.forEach((s, k) => { s.inert = k !== i; });          // hidden slides can't be tabbed into
-      segs.forEach((b, k) => {
-        b.classList.remove("on");
-        b.classList.toggle("done", k < i);
-        b.setAttribute("aria-current", k === i);
-      });
-      if (segs[i]) { void segs[i].offsetWidth; segs[i].classList.add("on"); }   // restarts the bar
+      if (items.length > 1) {                                    // restart the bar for this announcement
+        bar.style.setProperty("--dur", Math.max(3, Number(items[i].seconds) || SECONDS) * 1000 + "ms");
+        bar.classList.remove("run");
+        void bar.offsetWidth;
+        bar.classList.add("run");
+      }
     };
 
     if (items.length > 1) {
-      bar.innerHTML = items.map((a, k) =>
-        `<button type="button" style="--dur:${Math.max(3, Number(a.seconds) || SECONDS) * 1000}ms" aria-label="Announcement ${k + 1} of ${items.length}"><span><i></i></span></button>`
-      ).join("");
-      segs.push(...bar.children);
-
-      bar.addEventListener("click", e => {
-        const k = segs.indexOf(e.target.closest("button"));
-        if (k >= 0) go(k);
-      });
+      // the next announcement comes when the bar is full
       bar.addEventListener("animationend", e => { if (e.animationName === "nfill") go(i + 1); });
 
       if (matchMedia("(hover: hover)").matches) {
@@ -333,6 +321,8 @@ const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Dat
         if (Math.abs(dx) > 40) go(i + (dx < 0 ? 1 : -1));
       });
       card.addEventListener("touchcancel", () => { x0 = null; hold("touch", false); });
+    } else {
+      bar.hidden = true;
     }
     go(0);
   } catch (err) {}
