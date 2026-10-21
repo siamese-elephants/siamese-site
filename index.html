@@ -229,6 +229,7 @@ const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Dat
     if (!r.ok) throw new Error(r.status);
     const today = new Date(); today.setHours(0, 0, 0, 0);
     const shows = (await r.json())
+      .filter(s => s.show !== false && s.show !== "false")
       .map(s => ({ ...s, _d: toDate(s.date) }))
       .filter(s => s._d >= today)
       .sort((a, b) => a._d - b._d);
