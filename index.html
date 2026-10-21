@@ -74,9 +74,41 @@ main{padding:24px 16px 8px;display:grid;grid-template-columns:minmax(0,1fr);gap:
 .ann h3{margin:2px 0 4px;font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:22px}
 .ann p{margin:0;color:var(--soft)}
 .ann p a{text-decoration:underline}
-#news-list{max-height:260px;overflow-y:auto;overscroll-behavior:contain;padding-right:8px;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:var(--card2) transparent}
-#news-list::-webkit-scrollbar{width:6px}
-#news-list::-webkit-scrollbar-thumb{background:var(--card2);border-radius:3px}
+/* announcements carousel */
+.news{touch-action:pan-y}
+.nview{overflow:hidden}
+.ntrack{display:flex;transition:transform .6s ease}
+.ntrack .ann{flex:0 0 100%;margin:0}
+.nbar{display:flex;gap:6px;margin-top:16px}
+.nbar button{flex:1;height:14px;padding:0;border:0;background:none;cursor:pointer;display:flex;align-items:center}
+.nbar button span{display:block;width:100%;height:3px;border-radius:3px;background:var(--card2);overflow:hidden}
+.nbar button i{display:block;height:100%;width:0;background:var(--beige)}
+.nbar button.done i{width:100%}
+.nbar button.on i{animation:nfill var(--dur,7000ms) linear forwards}
+.news.paused .nbar button.on i{animation-play-state:paused}
+@keyframes nfill{from{width:0}to{width:100%}}
+@media (prefers-reduced-motion:reduce){.ntrack{transition:none}.nbar button.on i{animation:none;width:100%}}
+/* announcements: text clamp + "read more" popup */
+.ann .atext{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:var(--rows,4);line-clamp:var(--rows,4);overflow:hidden;white-space:pre-line}
+.aact{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:8px}
+.aact[hidden],.amore[hidden]{display:none}
+.amore{padding:0;border:0;background:none;font:inherit;font-size:14px;font-weight:700;color:var(--beige);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.alink{font-size:14px;color:var(--soft);text-decoration:underline;text-underline-offset:3px}
+.amore:hover,.alink:hover{color:var(--hover)}
+html.modal-open{overflow:hidden}
+.nmodal{width:min(560px,calc(100vw - 32px));max-height:min(85vh,720px);padding:0;border:1px solid var(--card2);border-radius:18px;background:var(--card);color:var(--beige);box-shadow:0 24px 80px rgba(0,0,0,.6);overflow:hidden}
+.nmodal::backdrop{background:rgba(5,8,6,.72);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.nmodal[open]{display:flex;flex-direction:column;animation:npop .2s ease}
+.nm-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:22px 22px 0}
+.nm-head time{font-size:12px;color:var(--mut);letter-spacing:.08em;text-transform:uppercase}
+.nm-head h3{margin:2px 0 0;font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:clamp(24px,5vw,30px);line-height:1.15}
+.nm-x{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--card2);background:none;color:var(--beige);font-size:16px;line-height:1;cursor:pointer}
+.nm-x:hover,.nm-x:focus-visible{border-color:var(--beige);outline:0}
+.nm-body{padding:12px 22px 24px;overflow-y:auto;overscroll-behavior:contain}
+.nm-text{margin:14px 0 0;color:var(--soft);font-size:16px;line-height:1.65;white-space:pre-line}
+.nm-link{display:inline-block;margin-top:18px;font-size:15px}
+@keyframes npop{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.nmodal[open]{animation:none}}
 /* shows */
 .show{display:grid;grid-template-columns:58px 1fr auto;gap:14px;align-items:center;padding:14px 0;border-top:1px solid var(--card2)}
 .show:first-of-type{border-top:0;padding-top:0}
@@ -188,12 +220,17 @@ const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Dat
 <main>
 
 <!-- ===== ANNOUNCEMENTS (config/announcements.json) ===== -->
-<section class="card" id="news" hidden><h2>Announcements</h2>
-  <div id="news-list"></div>
+<section class="card news" id="news" hidden><h2>Announcements</h2>
+  <div class="nview"><div class="ntrack" id="news-track"></div></div>
+  <div class="nbar" id="news-bar"></div>
 </section>
 <script>
 (async () => {
-  const box = document.getElementById("news-list");
+  const card = document.getElementById("news");
+  const track = document.getElementById("news-track");
+  const bar = document.getElementById("news-bar");
+  const SECONDS = 7;      // default display time per announcement
+  const ROWS = 4;         // text rows before "Read more" appears
   try {
     const r = await fetch("config/announcements.json", { cache: "no-cache" });
     if (!r.ok) throw new Error(r.status);
@@ -202,19 +239,106 @@ const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Dat
       .map(a => ({ ...a, _d: a.date ? toDate(a.date) : null }))
       .sort((a, b) => (b._d || 0) - (a._d || 0));
     if (!items.length) return;
-    box.innerHTML = items.map(a => {
-      const when = a._d
-        ? `<time datetime="${esc(a.date)}">${a._d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</time>`
-        : "";
-      const link = a.link
-        ? ` <a href="${esc(a.link)}" target="_blank" rel="noopener">${esc(a.linkText || "Read more →")}</a>`
-        : "";
-      return `<article class="ann">${when}<h3>${esc(a.title)}</h3><p>${esc(a.text)}${link}</p></article>`;
-    }).join("");
-    document.getElementById("news").hidden = false;
+
+    const whenHtml = a => a._d
+      ? `<time datetime="${esc(a.date)}">${a._d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</time>`
+      : "";
+    const linkHtml = (a, cls) => a.link
+      ? `<a class="${cls}" href="${esc(a.link)}" target="_blank" rel="noopener">${esc(a.linkText || "Open link →")}</a>`
+      : "";
+
+    track.style.setProperty("--rows", ROWS);
+    track.innerHTML = items.map((a, k) =>
+      `<article class="ann">${whenHtml(a)}<h3>${esc(a.title)}</h3><p class="atext">${esc(a.text)}</p><div class="aact"><button type="button" class="amore" data-k="${k}" hidden>Read more</button>${linkHtml(a, "alink")}</div></article>`
+    ).join("");
+    card.hidden = false;
+
+    const slides = [...track.children];
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // "Read more" only appears where the text is actually cut off
+    const measure = () => slides.forEach(s => {
+      const tx = s.querySelector(".atext"), more = s.querySelector(".amore"), act = s.querySelector(".aact");
+      more.hidden = !(tx.scrollHeight > tx.clientHeight + 1);
+      act.hidden = more.hidden && !s.querySelector(".alink");
+    });
+    measure();
+    addEventListener("resize", measure);
+    if (document.fonts) document.fonts.ready.then(measure);
+
+    // the bar pauses for several reasons at once, so each one is tracked separately
+    const held = {};
+    const hold = (k, v) => { held[k] = v; card.classList.toggle("paused", Object.values(held).some(Boolean)); };
+
+    // the popup
+    const dlg = document.createElement("dialog");
+    dlg.className = "nmodal";
+    dlg.setAttribute("aria-labelledby", "nm-title");
+    document.body.appendChild(dlg);
+    const openModal = k => {
+      const a = items[k];
+      dlg.innerHTML = `<div class="nm-head"><div>${whenHtml(a)}<h3 id="nm-title">${esc(a.title)}</h3></div><button type="button" class="nm-x" aria-label="Close">✕</button></div><div class="nm-body"><p class="nm-text">${esc(a.text)}</p>${linkHtml(a, "alink nm-link")}</div>`;
+      document.documentElement.classList.add("modal-open");
+      hold("modal", true);
+      dlg.showModal();
+    };
+    dlg.addEventListener("click", e => { if (e.target === dlg || e.target.closest(".nm-x")) dlg.close(); });
+    dlg.addEventListener("close", () => { document.documentElement.classList.remove("modal-open"); hold("modal", false); });
+    track.addEventListener("click", e => {
+      const b = e.target.closest(".amore");
+      if (b) openModal(Number(b.dataset.k));
+    });
+
+    // carousel
+    const segs = [];
+    let i = 0;
+    const go = n => {
+      i = (n + items.length) % items.length;
+      track.style.transform = `translateX(-${i * 100}%)`;
+      slides.forEach((s, k) => { s.inert = k !== i; });          // hidden slides can't be tabbed into
+      segs.forEach((b, k) => {
+        b.classList.remove("on");
+        b.classList.toggle("done", k < i);
+        b.setAttribute("aria-current", k === i);
+      });
+      if (segs[i]) { void segs[i].offsetWidth; segs[i].classList.add("on"); }   // restarts the bar
+    };
+
+    if (items.length > 1) {
+      bar.innerHTML = items.map((a, k) =>
+        `<button type="button" style="--dur:${Math.max(3, Number(a.seconds) || SECONDS) * 1000}ms" aria-label="Announcement ${k + 1} of ${items.length}"><span><i></i></span></button>`
+      ).join("");
+      segs.push(...bar.children);
+
+      bar.addEventListener("click", e => {
+        const k = segs.indexOf(e.target.closest("button"));
+        if (k >= 0) go(k);
+      });
+      bar.addEventListener("animationend", e => { if (e.animationName === "nfill") go(i + 1); });
+
+      if (matchMedia("(hover: hover)").matches) {
+        card.addEventListener("mouseenter", () => hold("hover", true));
+        card.addEventListener("mouseleave", () => hold("hover", false));
+      }
+      card.addEventListener("focusin", e => { if (e.target.matches(":focus-visible")) hold("focus", true); });
+      card.addEventListener("focusout", () => hold("focus", false));
+
+      let x0 = null;
+      card.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; hold("touch", true); }, { passive: true });
+      card.addEventListener("touchend", e => {
+        hold("touch", false);
+        if (x0 === null) return;
+        const dx = e.changedTouches[0].clientX - x0;
+        x0 = null;
+        if (Math.abs(dx) > 40) go(i + (dx < 0 ? 1 : -1));
+      });
+      card.addEventListener("touchcancel", () => { x0 = null; hold("touch", false); });
+    }
+    go(0);
   } catch (err) {}
 })();
 </script>
+
 
 <!-- ===== SHOWS (config/shows.json) ===== -->
 <section class="card" id="shows"><h2>Shows</h2>
