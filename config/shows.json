@@ -1,12 +1,12 @@
 [
   {
     "date": "2026-10-29",
-    "city": "Vienna",
+    "city": "EXAMPLE",
     "country": "AT",
     "venue": "Flucc Wanne",
     "note": "w/ Cassies",
     "tickets": "https://fienta.com/de/cassies-flucc",
-    "status": "",
+    "status": "boxoffice",
     "show": false
   },
   {
