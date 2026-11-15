@@ -14,8 +14,8 @@
     "city": "Vienna",
     "country": "AT",
     "venue": "Club Lucia",
-    "tickets": "",
-    "status": "soon",
+    "tickets": "https://ntry.at/siamese-elephants?l=de",
+    "status": "",
     "show": true
   },
   {
